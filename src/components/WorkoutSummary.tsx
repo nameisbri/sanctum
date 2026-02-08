@@ -75,7 +75,7 @@ export function WorkoutSummary({
         <div className="space-y-4 mb-8">
           {/* Volume — hero stat */}
           <div>
-            <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+            <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
               Volume
             </p>
             <p className="text-3xl font-bold text-metal-gold font-mono">
@@ -85,7 +85,7 @@ export function WorkoutSummary({
 
           <div className="flex justify-center gap-8">
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Exercises
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -93,7 +93,7 @@ export function WorkoutSummary({
               </p>
             </div>
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Sets
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -101,7 +101,7 @@ export function WorkoutSummary({
               </p>
             </div>
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Duration
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -110,7 +110,7 @@ export function WorkoutSummary({
             </div>
             {prCount > 0 && (
               <div>
-                <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+                <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                   PRs
                 </p>
                 <p className="text-xl font-bold text-metal-gold">

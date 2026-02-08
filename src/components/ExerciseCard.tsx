@@ -102,12 +102,12 @@ export function ExerciseCard({
             <span className={`text-xs px-2 py-0.5 rounded border ${badgeColor}`}>
               {exercise.category}
             </span>
-            <span className="text-xs text-sanctum-500">
+            <span className="text-xs text-sanctum-400">
               {exercise.sets} × {exercise.reps}
               {exercise.perSide ? ' /side' : ''}
             </span>
             {!isExpanded && lastExerciseData && !lastExerciseData.skipped && lastExerciseData.sets[0]?.weight != null && (
-              <span className="text-xs text-sanctum-500 font-mono">
+              <span className="text-xs text-sanctum-400 font-mono">
                 Last: {convertWeight(lastExerciseData.sets[0].weight, unit)}{unit} × {lastExerciseData.sets[0].reps ?? '—'}
               </span>
             )}
@@ -132,7 +132,7 @@ export function ExerciseCard({
           {/* Previous session data */}
           {lastExerciseData && !lastExerciseData.skipped && (
             <div className="mb-4">
-              <p className="text-xs text-sanctum-500 mb-1.5">Previous</p>
+              <p className="text-xs text-sanctum-400 mb-1.5">Previous</p>
               <div className="flex flex-wrap gap-2">
                 {lastExerciseData.sets.map((set, i) => (
                   <span
@@ -171,7 +171,7 @@ export function ExerciseCard({
           {/* Notes toggle */}
           <button
             onClick={() => setShowNotes(!showNotes)}
-            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
+            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-400 hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
           >
             <MessageSquare size={12} />
             Notes
@@ -325,7 +325,7 @@ function SetRow({
           : 'bg-sanctum-850 border border-sanctum-700/50'
       }`}>
         {/* Set label */}
-        <span className="text-xs text-sanctum-500 w-10 text-center font-medium">
+        <span className="text-xs text-sanctum-400 w-10 text-center font-medium">
           Set {set.setNumber}
         </span>
 

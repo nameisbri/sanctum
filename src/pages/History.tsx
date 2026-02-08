@@ -57,13 +57,13 @@ export function History() {
       {sortedLogs.length > 0 && (
         <div className="flex gap-4 mb-6">
           <div className="flex-1 bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
-            <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">This Cycle</p>
+            <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">This Cycle</p>
             <p className="text-xl font-bold text-metal-gold font-mono">
               {formatVolumeWithUnit(cycleVolume.totalVolume, unit)}
             </p>
           </div>
           <div className="flex-1 bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
-            <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">All Time</p>
+            <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">All Time</p>
             <p className="text-xl font-bold text-metal-gold font-mono">
               {formatVolumeWithUnit(allTimeVolume, unit)}
             </p>
@@ -108,7 +108,7 @@ export function History() {
                         {formatVolumeWithUnit(volume, unit)}
                       </span>
                       {log.duration != null && log.duration > 0 && (
-                        <span className="text-sm text-sanctum-500">
+                        <span className="text-sm text-sanctum-400">
                           {formatDuration(log.duration)}
                         </span>
                       )}

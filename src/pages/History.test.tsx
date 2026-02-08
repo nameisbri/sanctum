@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { History } from './History';
@@ -190,7 +190,7 @@ describe('History', () => {
 
       // Click to expand
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText('Incline Barbell Press')).toBeInTheDocument();
+      expect(await screen.findByText('Incline Barbell Press')).toBeInTheDocument();
     });
 
     it('collapses on second click', async () => {
@@ -202,12 +202,12 @@ describe('History', () => {
 
       const button = screen.getByRole('button');
       await user.click(button);
-      expect(screen.getByText('Incline Barbell Press')).toBeInTheDocument();
+      expect(await screen.findByText('Incline Barbell Press')).toBeInTheDocument();
 
       await user.click(button);
-      // The exercise name is no longer shown in expanded detail
-      // (it might still be in the card header as day name)
-      expect(screen.queryByText('Incline Barbell Press')).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.queryByText('Incline Barbell Press')).not.toBeInTheDocument();
+      });
     });
 
     it('shows session notes when expanded', async () => {
@@ -216,7 +216,7 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText(/"Felt strong today"/)).toBeInTheDocument();
+      expect(await screen.findByText(/"Felt strong today"/)).toBeInTheDocument();
     });
 
     it('shows skipped exercises', async () => {
@@ -227,7 +227,7 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText('SKIPPED')).toBeInTheDocument();
+      expect(await screen.findByText('SKIPPED')).toBeInTheDocument();
     });
 
     it('shows replaced exercise name', async () => {
@@ -243,7 +243,7 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText(/Pec Deck → Cable Crossover/)).toBeInTheDocument();
+      expect(await screen.findByText(/Pec Deck → Cable Crossover/)).toBeInTheDocument();
     });
 
     it('shows exercise notes when present', async () => {
@@ -254,7 +254,7 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText(/"Elbow pain on last rep"/)).toBeInTheDocument();
+      expect(await screen.findByText(/"Elbow pain on last rep"/)).toBeInTheDocument();
     });
 
     it('shows set data as weight × reps', async () => {
@@ -267,7 +267,7 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
-      expect(screen.getByText(/135 lb × 8/)).toBeInTheDocument();
+      expect(await screen.findByText(/135 lb × 8/)).toBeInTheDocument();
     });
   });
 
@@ -308,7 +308,7 @@ describe('History', () => {
       const buttons = screen.getAllByRole('button');
       await user.click(buttons[0]);
 
-      expect(screen.getByText('★')).toBeInTheDocument();
+      expect(await screen.findByText('★')).toBeInTheDocument();
     });
 
     it('does not show PR star on first workout', async () => {
@@ -323,6 +323,8 @@ describe('History', () => {
       renderHistory();
 
       await user.click(screen.getByRole('button'));
+      // Wait for expand to complete, then check no PR star
+      await screen.findByText(/200 lb × 10/);
       expect(screen.queryByText('★')).not.toBeInTheDocument();
     });
   });

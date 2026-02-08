@@ -198,6 +198,16 @@ export function Workout() {
   const handleCompleteWorkout = () => {
     if (!validationResult.isValid) {
       setShowValidationErrors(true);
+      // Scroll to first incomplete exercise
+      const firstIncomplete = exerciseLogs.findIndex(
+        (log) => !log.skipped && !log.sets.every((s) => s.completed)
+      );
+      if (firstIncomplete >= 0) {
+        const el = document.querySelector(
+          `[data-exercise-index="${firstIncomplete}"]`
+        );
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     setShowSummary(true);
@@ -389,7 +399,7 @@ export function Workout() {
       )}
 
       {/* Complete Workout Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-sanctum-950 via-sanctum-950 to-transparent">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-gradient-to-t from-sanctum-950 via-sanctum-950 to-transparent">
         <button
           onClick={handleCompleteWorkout}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
