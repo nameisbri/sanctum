@@ -27,7 +27,7 @@ export function Workout() {
   const lastWorkout = getLastWorkoutForDay(dayNum);
 
   // Initialize startTime and exerciseLogs from localStorage or create new
-  const [startTime, setStartTime] = useState<number>(() => {
+  const [startTime] = useState<number>(() => {
     const savedWorkout = getActiveWorkout(dayNum);
     if (savedWorkout && savedWorkout.cycle === currentCycle) {
       return savedWorkout.startTime;
@@ -191,29 +191,8 @@ export function Workout() {
   };
 
   const handleResetWorkout = () => {
-    const freshLogs = exercises.map((ex) => ({
-      exerciseName: ex.name,
-      sets: Array.from({ length: ex.sets }, (_, i) => ({
-        setNumber: i + 1,
-        weight: null,
-        reps: null,
-        completed: false,
-      })),
-      notes: '',
-    }));
-    const newStartTime = Date.now();
-    setExerciseLogs(freshLogs);
-    setStartTime(newStartTime);
-    setExpandedExercise(0);
-    setShowValidationErrors(false);
-    setSessionNotes('');
-    setShowResetConfirm(false);
-    saveActiveWorkout({
-      dayNumber: dayNum,
-      cycle: currentCycle,
-      exercises: freshLogs,
-      startTime: newStartTime,
-    });
+    clearActiveWorkout(dayNum);
+    navigate('/');
   };
 
   const handleCompleteWorkout = () => {
