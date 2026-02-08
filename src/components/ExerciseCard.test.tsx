@@ -178,14 +178,14 @@ describe('ExerciseCard', () => {
     });
   });
 
-  // 8. Skip button hidden for non-optional exercises
-  describe('skip button hidden', () => {
-    it('does NOT show Skip for non-optional exercises', () => {
+  // 8. Skip button available for all exercises
+  describe('skip button', () => {
+    it('shows Skip for all exercises regardless of optional flag', () => {
       render(
         <ExerciseCard {...createDefaultProps({ isExpanded: true })} />
       );
 
-      expect(screen.queryByText('Skip')).not.toBeInTheDocument();
+      expect(screen.getByText('Skip')).toBeInTheDocument();
     });
   });
 

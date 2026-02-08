@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Pause, Play, RotateCcw } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
 import { getExercisesForDay, getWorkoutDay } from '../data/program';
 import { ExerciseLog, SetLog, WorkoutLog } from '../types';
@@ -27,7 +27,7 @@ export function Workout() {
   const lastWorkout = getLastWorkoutForDay(dayNum);
 
   // Initialize startTime and exerciseLogs from localStorage or create new
-  const [startTime] = useState<number>(() => {
+  const [startTime, setStartTime] = useState<number>(() => {
     const savedWorkout = getActiveWorkout(dayNum);
     if (savedWorkout && savedWorkout.cycle === currentCycle) {
       return savedWorkout.startTime;
@@ -63,7 +63,8 @@ export function Workout() {
   const [showSummary, setShowSummary] = useState(false);
   const [sessionNotes, setSessionNotes] = useState('');
 
-  const { elapsed, seconds: elapsedSeconds } = useSessionTimer(startTime);
+  const { elapsed, seconds: elapsedSeconds, paused, togglePause } = useSessionTimer(startTime);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   // Auto-scroll to expanded exercise on mount
   useEffect(() => {
@@ -189,6 +190,32 @@ export function Workout() {
     });
   };
 
+  const handleResetWorkout = () => {
+    const freshLogs = exercises.map((ex) => ({
+      exerciseName: ex.name,
+      sets: Array.from({ length: ex.sets }, (_, i) => ({
+        setNumber: i + 1,
+        weight: null,
+        reps: null,
+        completed: false,
+      })),
+      notes: '',
+    }));
+    const newStartTime = Date.now();
+    setExerciseLogs(freshLogs);
+    setStartTime(newStartTime);
+    setExpandedExercise(0);
+    setShowValidationErrors(false);
+    setSessionNotes('');
+    setShowResetConfirm(false);
+    saveActiveWorkout({
+      dayNumber: dayNum,
+      cycle: currentCycle,
+      exercises: freshLogs,
+      startTime: newStartTime,
+    });
+  };
+
   const handleCompleteWorkout = () => {
     if (!validationResult.isValid) {
       setShowValidationErrors(true);
@@ -264,9 +291,26 @@ export function Workout() {
               </h1>
             </div>
 
-            <span className="text-sm text-sanctum-400 font-mono tabular-nums">
-              {elapsed}
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={togglePause}
+                className="text-sanctum-500 hover:text-sanctum-300 transition-colors p-1"
+                aria-label={paused ? 'Resume timer' : 'Pause timer'}
+              >
+                {paused ? <Play size={14} /> : <Pause size={14} />}
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(true)}
+                className="text-sanctum-500 hover:text-sanctum-300 transition-colors p-1"
+                aria-label="Reset workout"
+              >
+                <RotateCcw size={14} />
+              </button>
+              <span className={`text-sm font-mono tabular-nums ${paused ? 'text-blood-400' : 'text-sanctum-400'}`}>
+                {elapsed}
+                {paused && <span className="text-xs ml-1">||</span>}
+              </span>
+            </div>
           </div>
 
           {/* Progress bar */}
@@ -278,6 +322,31 @@ export function Workout() {
           </div>
         </div>
       </header>
+
+      {/* Reset confirmation */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-sanctum-950/80 backdrop-blur-sm">
+          <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-5 max-w-xs w-full animate-fade-in">
+            <p className="text-sm text-sanctum-200 mb-4">
+              Reset this workout? All logged sets will be cleared.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 py-2.5 rounded-lg border border-sanctum-700 text-sm text-sanctum-300 hover:bg-sanctum-800 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetWorkout}
+                className="flex-1 py-2.5 rounded-lg bg-blood-500 text-sm text-white font-medium hover:bg-blood-400 transition-colors"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Exercise List */}
       <div className="p-4 space-y-3">

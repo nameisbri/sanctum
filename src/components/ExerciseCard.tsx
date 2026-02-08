@@ -43,6 +43,8 @@ export function ExerciseCard({
   const [showNotes, setShowNotes] = useState(!!exerciseLog.notes);
   const [showReplace, setShowReplace] = useState(false);
   const [replaceName, setReplaceName] = useState('');
+  // Track which set has an active rest timer (-1 = none)
+  const [restingSetIndex, setRestingSetIndex] = useState(-1);
   const completedSets = exerciseLog.sets.filter(s => s.completed).length;
   const allComplete = completedSets === exercise.sets;
   const isSkipped = exerciseLog.skipped || false;
@@ -144,6 +146,10 @@ export function ExerciseCard({
                 lastSetData={lastExerciseData?.sets[setIndex]}
                 onUpdateSet={onUpdateSet}
                 onSetComplete={onSetComplete}
+                isResting={restingSetIndex === setIndex}
+                onRestStart={() => setRestingSetIndex(setIndex)}
+                onRestEnd={() => setRestingSetIndex(-1)}
+                onInputFocus={() => { if (restingSetIndex !== setIndex) setRestingSetIndex(-1); }}
               />
             ))}
           </div>
@@ -201,15 +207,13 @@ export function ExerciseCard({
             </div>
           )}
 
-          {/* Skip exercise (optional only) */}
-          {exercise.optional && (
-            <button
-              onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
-              className="mt-2 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors"
-            >
-              {isSkipped ? 'Unskip' : 'Skip'}
-            </button>
-          )}
+          {/* Skip exercise */}
+          <button
+            onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
+            className="mt-2 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors"
+          >
+            {isSkipped ? 'Unskip' : 'Skip'}
+          </button>
         </div>
       )}
     </div>
@@ -226,6 +230,10 @@ interface SetRowProps {
   lastSetData?: SetLog;
   onUpdateSet: (exerciseIndex: number, setIndex: number, updates: Partial<SetLog>) => void;
   onSetComplete: (exerciseIndex: number, setIndex: number) => void;
+  isResting: boolean;
+  onRestStart: () => void;
+  onRestEnd: () => void;
+  onInputFocus: () => void;
 }
 
 function SetRow({
@@ -236,31 +244,42 @@ function SetRow({
   lastSetData,
   onUpdateSet,
   onSetComplete,
+  isResting,
+  onRestStart,
+  onRestEnd,
+  onInputFocus,
 }: SetRowProps) {
   const restDuration = getRestTimerSeconds(exercise.category);
   const [restRemaining, setRestRemaining] = useState(0);
-  const [restActive, setRestActive] = useState(false);
 
-  // Start rest timer when set is completed
+  // Start rest timer when set is newly completed
   const wasCompleted = usePrevious(set.completed);
 
   useEffect(() => {
     if (set.completed && !wasCompleted) {
       setRestRemaining(restDuration);
-      setRestActive(true);
+      onRestStart();
     }
-  }, [set.completed, wasCompleted, restDuration]);
+  }, [set.completed, wasCompleted, restDuration, onRestStart]);
 
+  // Kill timer when parent says we're no longer resting
   useEffect(() => {
-    if (!restActive || restRemaining <= 0) {
-      if (restRemaining <= 0) setRestActive(false);
+    if (!isResting && restRemaining > 0) {
+      setRestRemaining(0);
+    }
+  }, [isResting, restRemaining]);
+
+  // Countdown
+  useEffect(() => {
+    if (!isResting || restRemaining <= 0) {
+      if (restRemaining <= 0 && isResting) onRestEnd();
       return;
     }
 
     const interval = setInterval(() => {
       setRestRemaining(prev => {
         if (prev <= 1) {
-          setRestActive(false);
+          onRestEnd();
           return 0;
         }
         return prev - 1;
@@ -268,7 +287,7 @@ function SetRow({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [restActive, restRemaining]);
+  }, [isResting, restRemaining, onRestEnd]);
 
   const formatRest = (secs: number) => {
     const m = Math.floor(secs / 60);
@@ -297,6 +316,7 @@ function SetRow({
           onChange={(e) => onUpdateSet(exerciseIndex, setIndex, {
             weight: e.target.value ? parseFloat(e.target.value) : null,
           })}
+          onFocus={onInputFocus}
           placeholder={lastSetData?.weight ? `${lastSetData.weight}` : 'lb'}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
@@ -311,6 +331,7 @@ function SetRow({
           onChange={(e) => onUpdateSet(exerciseIndex, setIndex, {
             reps: e.target.value ? parseInt(e.target.value, 10) : null,
           })}
+          onFocus={onInputFocus}
           placeholder={lastSetData?.reps ? `${lastSetData.reps}` : exercise.reps.split('-')[0]}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
@@ -334,9 +355,9 @@ function SetRow({
       </div>
 
       {/* Rest timer */}
-      {restActive && restRemaining > 0 && (
+      {isResting && restRemaining > 0 && (
         <button
-          onClick={() => { setRestActive(false); setRestRemaining(0); }}
+          onClick={onRestEnd}
           className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors"
         >
           Rest: {formatRest(restRemaining)}
