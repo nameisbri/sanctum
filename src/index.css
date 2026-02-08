@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-lavender-50 text-witch-900 antialiased;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+  overscroll-behavior: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-lavender-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-witch-500/40 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-witch-500/60;
+}
+
+/* Input styling */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Card glass effect */
+.glass-card {
+  @apply bg-white/70 backdrop-blur-xl border border-witch-500/10 rounded-2xl shadow-sm;
+  box-shadow:
+    0 4px 20px -4px rgba(107, 77, 138, 0.08),
+    0 0 0 1px rgba(107, 77, 138, 0.05);
+}
+
+/* Gradient backgrounds */
+.gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+}
+
+.gradient-pink {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+}
+
+.gradient-coral {
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+}
+
+.gradient-gold {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.gradient-teal {
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+}
+
+.gradient-mystic {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #fbbf24 100%);
+}
+
+.gradient-witch {
+  background: linear-gradient(135deg, #1a1025 0%, #3d2a52 100%);
+}
+
+/* Background pattern */
+.pattern-dots {
+  background-image: radial-gradient(circle, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 92, 246, 0) 0%,
+    rgba(139, 92, 246, 0.08) 50%,
+    rgba(139, 92, 246, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Ring animation for timer */
+@keyframes ring-progress {
+  from { stroke-dashoffset: 283; }
+}
+
+.ring-animate {
+  animation: ring-progress 1s ease-out forwards;
+}
+
+/* Category colors */
+.category-chest {
+  @apply text-violet-600;
+}
+
+.category-back {
+  @apply text-blue-600;
+}
+
+.category-shoulders {
+  @apply text-amber-600;
+}
+
+.category-biceps {
+  @apply text-pink-600;
+}
+
+.category-triceps {
+  @apply text-rose-600;
+}
+
+.category-legs {
+  @apply text-teal-600;
+}
+
+.category-abs {
+  @apply text-orange-600;
+}
+
+/* PWA styles */
+@media (display-mode: standalone) {
+  body {
+    padding-top: max(var(--safe-area-inset-top), 20px);
+  }
+}
+
+/* Focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:ring-offset-2 focus:ring-offset-lavender-50;
+}
+
+/* Button base */
+.btn {
+  @apply px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 active:scale-95;
+}
+
+.btn-primary {
+  @apply btn gradient-purple text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:brightness-110;
+}
+
+.btn-secondary {
+  @apply btn bg-white text-witch-700 hover:bg-lavender-100 border-2 border-witch-500/20;
+}
+
+.btn-ghost {
+  @apply btn bg-transparent text-witch-600 hover:text-witch-900 hover:bg-witch-500/10;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10 hover:-translate-y-0.5;
+}
+
+/* Day card gradients */
+.day-1-gradient {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+}
+
+.day-2-gradient {
+  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+}
+
+.day-3-gradient {
+  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+}
+
+.day-4-gradient {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.day-5-gradient {
+  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+}
+
+.day-6-gradient {
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+}
+
+/* Progress bar gradient */
+.progress-gradient {
+  background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #fbbf24 100%);
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
