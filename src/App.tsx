@@ -1,6 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { ProgressProvider } from './contexts/ProgressContext';
+import { BottomNav } from './components/BottomNav';
 
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Workout = lazy(() => import('./pages/Workout').then(m => ({ default: m.Workout })));
@@ -18,9 +19,12 @@ function PageLoader() {
   );
 }
 
-function App() {
+function AppLayout() {
+  const location = useLocation();
+  const hideNav = location.pathname.startsWith('/workout');
+
   return (
-    <ProgressProvider>
+    <>
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -29,6 +33,15 @@ function App() {
           <Route path="/design" element={<DesignSystem />} />
         </Routes>
       </Suspense>
+      {!hideNav && <BottomNav />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <ProgressProvider>
+      <AppLayout />
     </ProgressProvider>
   );
 }
