@@ -71,7 +71,7 @@ input[type="number"] {
 */
 @layer components {
   .card {
-    @apply bg-sanctum-900 border border-sanctum-700 rounded-lg transition-colors duration-200 ease-out;
+    @apply bg-sanctum-900 border border-sanctum-700 rounded-xl transition-colors duration-200 ease-out;
   }
 
   .card-hover {
@@ -148,6 +148,18 @@ input[type="number"] {
 @media (display-mode: standalone) {
   body {
     padding-top: max(var(--safe-area-inset-top), 20px);
+  }
+}
+
+/* --- Reduced motion ---
+   Respect users who prefer reduced motion
+*/
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

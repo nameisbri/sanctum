@@ -65,7 +65,7 @@ export function Settings() {
         </h1>
 
         {/* Units */}
-        <div className="bg-sanctum-900 border border-sanctum-700 rounded-lg p-4">
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
           <p className="text-sm text-sanctum-200 mb-3">Units</p>
           <div className="flex gap-2">
             {(['lb', 'kg'] as const).map((u) => (
@@ -87,7 +87,7 @@ export function Settings() {
         <div className="border-t border-sanctum-700 my-4" />
 
         {/* Deload interval */}
-        <div className="bg-sanctum-900 border border-sanctum-700 rounded-lg p-4">
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
           <p className="text-sm text-sanctum-200 mb-3">Deload cycle (weeks)</p>
           <div className="flex gap-2">
             {deloadOptions.map((weeks) => (
@@ -109,7 +109,7 @@ export function Settings() {
         <div className="border-t border-sanctum-700 my-4" />
 
         {/* Export */}
-        <div className="bg-sanctum-900 border border-sanctum-700 rounded-lg p-4">
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
           <button
             onClick={exportData}
             className="w-full py-2.5 rounded-lg text-sm font-medium bg-sanctum-800 text-sanctum-200 border border-sanctum-700 hover:border-sanctum-500 transition-colors duration-200"
@@ -121,7 +121,7 @@ export function Settings() {
         <div className="border-t border-sanctum-700 my-4" />
 
         {/* Import */}
-        <div className="bg-sanctum-900 border border-sanctum-700 rounded-lg p-4">
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
           <input
             ref={fileInputRef}
             type="file"
@@ -170,7 +170,7 @@ export function Settings() {
         <div className="border-t border-sanctum-700 my-4" />
 
         {/* Reset */}
-        <div className="bg-sanctum-900 border border-sanctum-700 rounded-lg p-4">
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
           {!resetConfirm ? (
             <button
               onClick={() => setResetConfirm(true)}
@@ -188,6 +188,7 @@ export function Settings() {
                 value={resetInput}
                 onChange={(e) => setResetInput(e.target.value)}
                 placeholder="Type RESET to confirm"
+                aria-label="Type RESET to confirm data deletion"
                 className="w-full bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-sm text-sanctum-100 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors mb-3"
               />
               <div className="flex gap-3">

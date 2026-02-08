@@ -59,6 +59,17 @@ export function Workout() {
     return firstIncomplete >= 0 ? firstIncomplete : 0;
   });
 
+  // Escape key collapses expanded exercise
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && expandedExercise >= 0) {
+        setExpandedExercise(-1);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [expandedExercise]);
+
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [sessionNotes, setSessionNotes] = useState('');
@@ -198,6 +209,16 @@ export function Workout() {
   const handleCompleteWorkout = () => {
     if (!validationResult.isValid) {
       setShowValidationErrors(true);
+      // Scroll to first incomplete exercise
+      const firstIncomplete = exerciseLogs.findIndex(
+        (log) => !log.skipped && !log.sets.every((s) => s.completed)
+      );
+      if (firstIncomplete >= 0) {
+        const el = document.querySelector(
+          `[data-exercise-index="${firstIncomplete}"]`
+        );
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     setShowSummary(true);
@@ -261,6 +282,7 @@ export function Workout() {
             <button
               onClick={() => navigate('/')}
               className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-400 hover:text-sanctum-200 transition-colors"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft size={20} />
             </button>
@@ -378,6 +400,7 @@ export function Workout() {
               <button
                 onClick={() => setShowValidationErrors(false)}
                 className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-500 hover:text-sanctum-300 text-lg leading-none"
+                aria-label="Dismiss errors"
               >
                 ×
               </button>
@@ -387,7 +410,7 @@ export function Workout() {
       )}
 
       {/* Complete Workout Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-sanctum-950 via-sanctum-950 to-transparent">
+      <div className="fixed bottom-0 left-0 right-0 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-gradient-to-t from-sanctum-950 via-sanctum-950 to-transparent">
         <button
           onClick={handleCompleteWorkout}
           className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${

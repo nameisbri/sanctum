@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ExerciseCard } from './ExerciseCard';
 import type { Exercise, ExerciseLog } from '../types';
@@ -143,13 +143,15 @@ describe('ExerciseCard', () => {
       const notesButton = screen.getByText('Notes');
       await user.click(notesButton);
 
-      const textarea = screen.getByPlaceholderText('Notes');
+      const textarea = await screen.findByPlaceholderText('Notes');
       expect(textarea).toBeInTheDocument();
 
       await user.type(textarea, 'Felt strong');
 
       // onUpdateNotes is called for each character typed
-      expect(onUpdateNotes).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(onUpdateNotes).toHaveBeenCalled();
+      });
       // The last call should include the final character
       const lastCall = onUpdateNotes.mock.calls[onUpdateNotes.mock.calls.length - 1];
       expect(lastCall[0]).toBe(0);
@@ -213,7 +215,7 @@ describe('ExerciseCard', () => {
       await user.click(replaceButton);
 
       // Type a replacement name
-      const replaceInput = screen.getByPlaceholderText('Replace with');
+      const replaceInput = await screen.findByPlaceholderText('Replace with');
       expect(replaceInput).toBeInTheDocument();
 
       await user.type(replaceInput, 'Dumbbell Press');
@@ -222,7 +224,9 @@ describe('ExerciseCard', () => {
       const saveButton = screen.getByText('Save');
       await user.click(saveButton);
 
-      expect(onReplaceExercise).toHaveBeenCalledWith(0, 'Dumbbell Press');
+      await waitFor(() => {
+        expect(onReplaceExercise).toHaveBeenCalledWith(0, 'Dumbbell Press');
+      });
     });
   });
 

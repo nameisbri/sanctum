@@ -3,6 +3,7 @@ import { ExerciseLog, WorkoutLog } from '../types';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
 import { useUnits, formatVolumeWithUnit } from '../hooks/useUnits';
 import { isSetPR } from '../services/prDetector';
+import { formatDuration } from '../utils/timeFormatter';
 
 interface WorkoutSummaryProps {
   exerciseLogs: ExerciseLog[];
@@ -23,16 +24,6 @@ const closingLines = [
   'Progress locked.',
   'This is how legends train \u2014 alone, in silence.',
 ];
-
-function formatDuration(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-
-  if (hrs > 0) {
-    return `${hrs}h ${mins}m`;
-  }
-  return `${mins}m`;
-}
 
 export function WorkoutSummary({
   exerciseLogs,
@@ -75,7 +66,7 @@ export function WorkoutSummary({
         <div className="space-y-4 mb-8">
           {/* Volume — hero stat */}
           <div>
-            <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+            <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
               Volume
             </p>
             <p className="text-3xl font-bold text-metal-gold font-mono">
@@ -85,7 +76,7 @@ export function WorkoutSummary({
 
           <div className="flex justify-center gap-8">
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Exercises
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -93,7 +84,7 @@ export function WorkoutSummary({
               </p>
             </div>
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Sets
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -101,7 +92,7 @@ export function WorkoutSummary({
               </p>
             </div>
             <div>
-              <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+              <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                 Duration
               </p>
               <p className="text-xl font-bold text-sanctum-200">
@@ -110,7 +101,7 @@ export function WorkoutSummary({
             </div>
             {prCount > 0 && (
               <div>
-                <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+                <p className="text-xs text-sanctum-400 uppercase tracking-widest mb-1">
                   PRs
                 </p>
                 <p className="text-xl font-bold text-metal-gold">
@@ -126,6 +117,7 @@ export function WorkoutSummary({
           value={sessionNotes}
           onChange={(e) => onSessionNotesChange(e.target.value)}
           placeholder="Notes"
+          aria-label="Session notes"
           className="w-full bg-sanctum-900 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors mb-6"
           rows={3}
         />

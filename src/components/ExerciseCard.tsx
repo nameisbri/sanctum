@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { Exercise, ExerciseLog, SetLog, WorkoutLog } from '../types';
 import { getRestTimerSeconds } from '../data/program';
 import { useUnits, convertWeight } from '../hooks/useUnits';
 import { isSetPR } from '../services/prDetector';
+import { CATEGORY_BADGE_COLORS } from '../constants/categoryColors';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -20,17 +21,7 @@ interface ExerciseCardProps {
   previousWorkout: WorkoutLog | null;
 }
 
-const categoryBadgeColors: Record<string, string> = {
-  chest: 'bg-blood-900/40 text-blood-400 border-blood-800/30',
-  back: 'bg-sanctum-800 text-metal-silver border-sanctum-700',
-  shoulders: 'bg-sanctum-800 text-sanctum-300 border-sanctum-700',
-  biceps: 'bg-blood-900/30 text-blood-400 border-blood-800/20',
-  triceps: 'bg-blood-900/20 text-blood-300 border-blood-800/20',
-  legs: 'bg-sanctum-800 text-sanctum-200 border-sanctum-600',
-  abs: 'bg-sanctum-800 text-metal-bronze border-sanctum-700',
-};
-
-export function ExerciseCard({
+export const ExerciseCard = memo(function ExerciseCard({
   exercise,
   exerciseLog,
   exerciseIndex,
@@ -59,7 +50,7 @@ export function ExerciseCard({
     ? `${exercise.name} → ${exerciseLog.replacedWith}`
     : exercise.name;
 
-  const badgeColor = categoryBadgeColors[exercise.category] || categoryBadgeColors.back;
+  const badgeColor = CATEGORY_BADGE_COLORS[exercise.category] || CATEGORY_BADGE_COLORS.back;
 
   const handleReplace = () => {
     if (replaceName.trim()) {
@@ -84,10 +75,12 @@ export function ExerciseCard({
       <button
         onClick={onToggle}
         className="w-full p-4 flex items-center gap-3 text-left"
+        aria-expanded={isExpanded}
+        aria-label={`${displayName} — ${isExpanded ? 'collapse' : 'expand'}`}
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-sanctum-100 truncate text-sm">
+            <h3 className="font-medium text-sanctum-100 truncate text-sm" title={displayName}>
               {displayName}
             </h3>
             {isSkipped && (
@@ -100,12 +93,12 @@ export function ExerciseCard({
             <span className={`text-xs px-2 py-0.5 rounded border ${badgeColor}`}>
               {exercise.category}
             </span>
-            <span className="text-xs text-sanctum-500">
+            <span className="text-xs text-sanctum-400">
               {exercise.sets} × {exercise.reps}
               {exercise.perSide ? ' /side' : ''}
             </span>
             {!isExpanded && lastExerciseData && !lastExerciseData.skipped && lastExerciseData.sets[0]?.weight != null && (
-              <span className="text-xs text-sanctum-500 font-mono">
+              <span className="text-xs text-sanctum-400 font-mono">
                 Last: {convertWeight(lastExerciseData.sets[0].weight, unit)}{unit} × {lastExerciseData.sets[0].reps ?? '—'}
               </span>
             )}
@@ -130,7 +123,7 @@ export function ExerciseCard({
           {/* Previous session data */}
           {lastExerciseData && !lastExerciseData.skipped && (
             <div className="mb-4">
-              <p className="text-xs text-sanctum-500 mb-1.5">Previous</p>
+              <p className="text-xs text-sanctum-400 mb-1.5">Previous</p>
               <div className="flex flex-wrap gap-2">
                 {lastExerciseData.sets.map((set, i) => (
                   <span
@@ -169,7 +162,7 @@ export function ExerciseCard({
           {/* Notes toggle */}
           <button
             onClick={() => setShowNotes(!showNotes)}
-            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
+            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-400 hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
           >
             <MessageSquare size={12} />
             Notes
@@ -180,6 +173,7 @@ export function ExerciseCard({
               value={exerciseLog.notes}
               onChange={(e) => onUpdateNotes(exerciseIndex, e.target.value)}
               placeholder="Notes"
+              aria-label={`Notes for ${displayName}`}
               className="mt-2 w-full bg-sanctum-800 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors"
               rows={2}
             />
@@ -190,13 +184,13 @@ export function ExerciseCard({
             <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={() => setShowReplace(true)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 Replace
               </button>
               <button
                 onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 {isSkipped ? 'Unskip' : 'Skip'}
               </button>
@@ -209,18 +203,19 @@ export function ExerciseCard({
                 onChange={(e) => setReplaceName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReplace()}
                 placeholder="Replace with"
+                aria-label={`Replacement exercise for ${displayName}`}
                 className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
                 autoFocus
               />
               <button
                 onClick={handleReplace}
-                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-2.5 hover:bg-blood-900/20 transition-colors"
+                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-2.5 min-h-[44px] hover:bg-blood-900/20 transition-colors"
               >
                 Save
               </button>
               <button
                 onClick={() => { setShowReplace(false); setReplaceName(''); }}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 transition-colors"
               >
                 Cancel
               </button>
@@ -230,7 +225,7 @@ export function ExerciseCard({
       )}
     </div>
   );
-}
+});
 
 // --- SetRow sub-component ---
 
@@ -321,7 +316,7 @@ function SetRow({
           : 'bg-sanctum-850 border border-sanctum-700/50'
       }`}>
         {/* Set label */}
-        <span className="text-xs text-sanctum-500 w-10 text-center font-medium">
+        <span className="text-xs text-sanctum-400 w-10 text-center font-medium">
           Set {set.setNumber}
         </span>
 
@@ -336,6 +331,7 @@ function SetRow({
           })}
           onFocus={onInputFocus}
           placeholder={lastSetData?.weight ? `${convertWeight(lastSetData.weight, unit)}` : unit}
+          aria-label={`Set ${set.setNumber} weight in ${unit}`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
 
@@ -351,6 +347,7 @@ function SetRow({
           })}
           onFocus={onInputFocus}
           placeholder={lastSetData?.reps ? `${lastSetData.reps}` : exercise.reps.split('-')[0]}
+          aria-label={`Set ${set.setNumber} reps`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
 
@@ -381,6 +378,7 @@ function SetRow({
         <button
           onClick={onRestEnd}
           className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
+          aria-label={`Skip rest timer, ${restRemaining} seconds remaining`}
         >
           Rest: {formatRest(restRemaining)}
         </button>
