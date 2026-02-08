@@ -173,47 +173,47 @@ export function ExerciseCard({
             />
           )}
 
-          {/* Replace exercise */}
+          {/* Actions row */}
           {!showReplace ? (
-            <button
-              onClick={() => setShowReplace(true)}
-              className="mt-2 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors"
-            >
-              Replace
-            </button>
+            <div className="mt-3 flex items-center gap-2">
+              <button
+                onClick={() => setShowReplace(true)}
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+              >
+                Replace
+              </button>
+              <button
+                onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+              >
+                {isSkipped ? 'Unskip' : 'Skip'}
+              </button>
+            </div>
           ) : (
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-2">
               <input
                 type="text"
                 value={replaceName}
                 onChange={(e) => setReplaceName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReplace()}
                 placeholder="Replace with:"
-                className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
+                className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-1.5 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
                 autoFocus
               />
               <button
                 onClick={handleReplace}
-                className="text-xs text-blood-400 hover:text-blood-300 px-2 py-2"
+                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-1.5 hover:bg-blood-900/20 transition-colors"
               >
                 Save
               </button>
               <button
                 onClick={() => { setShowReplace(false); setReplaceName(''); }}
-                className="text-xs text-sanctum-500 hover:text-sanctum-300 px-2 py-2"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 transition-colors"
               >
                 Cancel
               </button>
             </div>
           )}
-
-          {/* Skip exercise */}
-          <button
-            onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
-            className="mt-2 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors"
-          >
-            {isSkipped ? 'Unskip' : 'Skip'}
-          </button>
         </div>
       )}
     </div>

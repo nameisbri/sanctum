@@ -40,7 +40,9 @@ export function DayCard({
             {lastWorkoutDate !== null && `Last: ${formatRelativeDate(lastWorkoutDate)}`}
           </span>
           {hasActiveWorkout && (
-            <span className="text-blood-500 text-xs font-medium">Resume</span>
+            <span className="text-xs font-medium text-blood-400 bg-blood-900/30 border border-blood-800/30 px-2.5 py-0.5 rounded-full">
+              Resume
+            </span>
           )}
         </div>
       )}
