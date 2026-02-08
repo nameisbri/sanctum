@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
-import { Exercise, ExerciseLog, SetLog } from '../types';
+import { Exercise, ExerciseLog, SetLog, WorkoutLog } from '../types';
 import { getRestTimerSeconds } from '../data/program';
 import { useUnits, convertWeight } from '../hooks/useUnits';
+import { isSetPR } from '../services/prDetector';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -16,6 +17,7 @@ interface ExerciseCardProps {
   onSkipExercise: (exerciseIndex: number, skipped: boolean) => void;
   onReplaceExercise: (exerciseIndex: number, replacementName: string) => void;
   lastExerciseData: ExerciseLog | null;
+  previousWorkout: WorkoutLog | null;
 }
 
 const categoryBadgeColors: Record<string, string> = {
@@ -40,6 +42,7 @@ export function ExerciseCard({
   onSkipExercise,
   onReplaceExercise,
   lastExerciseData,
+  previousWorkout,
 }: ExerciseCardProps) {
   const { unit } = useUnits();
   const [showNotes, setShowNotes] = useState(!!exerciseLog.notes);
@@ -101,6 +104,11 @@ export function ExerciseCard({
               {exercise.sets} × {exercise.reps}
               {exercise.perSide ? ' /side' : ''}
             </span>
+            {!isExpanded && lastExerciseData && !lastExerciseData.skipped && lastExerciseData.sets[0]?.weight != null && (
+              <span className="text-xs text-sanctum-500 font-mono">
+                Last: {convertWeight(lastExerciseData.sets[0].weight, unit)}{unit} × {lastExerciseData.sets[0].reps ?? '—'}
+              </span>
+            )}
           </div>
         </div>
 
@@ -145,7 +153,9 @@ export function ExerciseCard({
                 setIndex={setIndex}
                 exerciseIndex={exerciseIndex}
                 exercise={exercise}
+                exerciseName={exerciseLog.replacedWith || exercise.name}
                 lastSetData={lastExerciseData?.sets[setIndex]}
+                previousWorkout={previousWorkout}
                 onUpdateSet={onUpdateSet}
                 onSetComplete={onSetComplete}
                 isResting={restingSetIndex === setIndex}
@@ -229,7 +239,9 @@ interface SetRowProps {
   setIndex: number;
   exerciseIndex: number;
   exercise: Exercise;
+  exerciseName: string;
   lastSetData?: SetLog;
+  previousWorkout: WorkoutLog | null;
   onUpdateSet: (exerciseIndex: number, setIndex: number, updates: Partial<SetLog>) => void;
   onSetComplete: (exerciseIndex: number, setIndex: number) => void;
   isResting: boolean;
@@ -243,7 +255,9 @@ function SetRow({
   setIndex,
   exerciseIndex,
   exercise,
+  exerciseName,
   lastSetData,
+  previousWorkout,
   onUpdateSet,
   onSetComplete,
   isResting,
@@ -254,6 +268,7 @@ function SetRow({
   const { unit } = useUnits();
   const restDuration = getRestTimerSeconds(exercise.category);
   const [restRemaining, setRestRemaining] = useState(0);
+  const isPR = isSetPR(set, exerciseName, previousWorkout);
 
   // Start rest timer when set is newly completed
   const wasCompleted = usePrevious(set.completed);
@@ -355,6 +370,10 @@ function SetRow({
             </svg>
           )}
         </button>
+
+        {isPR && (
+          <span className="text-metal-gold text-sm flex-shrink-0" title="Personal record">★</span>
+        )}
       </div>
 
       {/* Rest timer */}

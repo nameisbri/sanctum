@@ -247,6 +247,7 @@ export function Workout() {
         sessionNotes={sessionNotes}
         onSessionNotesChange={setSessionNotes}
         onSave={handleFinalSave}
+        previousWorkout={lastWorkout}
       />
     );
   }
@@ -350,6 +351,7 @@ export function Workout() {
               onSkipExercise={handleSkipExercise}
               onReplaceExercise={handleReplaceExercise}
               lastExerciseData={lastExerciseData}
+              previousWorkout={lastWorkout}
             />
           );
         })}

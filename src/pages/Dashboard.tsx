@@ -5,7 +5,7 @@ import { formatRelativeDate } from '../utils/dateFormatter';
 import { DayCard } from '../components/DayCard';
 
 export function Dashboard() {
-  const { progress, getLastWorkoutForDay, shouldSuggestDeload } = useProgress();
+  const { progress, getLastWorkoutForDay, shouldSuggestDeload, recordDeload } = useProgress();
 
   const showDeload = shouldSuggestDeload();
 
@@ -38,9 +38,17 @@ export function Dashboard() {
 
         {/* Deload suggestion */}
         {showDeload && (
-          <p className="text-sanctum-400 italic text-sm mb-6">
-            Consider a deload. The body rebuilds in rest.
-          </p>
+          <div className="flex items-start justify-between mb-6">
+            <p className="text-sanctum-400 italic text-sm">
+              Consider a deload. The body rebuilds in rest.
+            </p>
+            <button
+              onClick={recordDeload}
+              className="text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors ml-3 flex-shrink-0 py-0.5"
+            >
+              Dismiss
+            </button>
+          </div>
         )}
 
         {!showDeload && <div className="mb-6" />}
