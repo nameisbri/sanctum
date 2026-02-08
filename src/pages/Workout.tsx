@@ -261,6 +261,7 @@ export function Workout() {
             <button
               onClick={() => navigate('/')}
               className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-400 hover:text-sanctum-200 transition-colors"
+              aria-label="Back to dashboard"
             >
               <ArrowLeft size={20} />
             </button>
@@ -378,6 +379,7 @@ export function Workout() {
               <button
                 onClick={() => setShowValidationErrors(false)}
                 className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-500 hover:text-sanctum-300 text-lg leading-none"
+                aria-label="Dismiss errors"
               >
                 ×
               </button>

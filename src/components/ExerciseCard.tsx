@@ -84,6 +84,8 @@ export function ExerciseCard({
       <button
         onClick={onToggle}
         className="w-full p-4 flex items-center gap-3 text-left"
+        aria-expanded={isExpanded}
+        aria-label={`${displayName} — ${isExpanded ? 'collapse' : 'expand'}`}
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
@@ -180,6 +182,7 @@ export function ExerciseCard({
               value={exerciseLog.notes}
               onChange={(e) => onUpdateNotes(exerciseIndex, e.target.value)}
               placeholder="Notes"
+              aria-label={`Notes for ${displayName}`}
               className="mt-2 w-full bg-sanctum-800 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors"
               rows={2}
             />
@@ -190,13 +193,13 @@ export function ExerciseCard({
             <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={() => setShowReplace(true)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 Replace
               </button>
               <button
                 onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 {isSkipped ? 'Unskip' : 'Skip'}
               </button>
@@ -209,18 +212,19 @@ export function ExerciseCard({
                 onChange={(e) => setReplaceName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReplace()}
                 placeholder="Replace with"
+                aria-label={`Replacement exercise for ${displayName}`}
                 className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
                 autoFocus
               />
               <button
                 onClick={handleReplace}
-                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-2.5 hover:bg-blood-900/20 transition-colors"
+                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-2.5 min-h-[44px] hover:bg-blood-900/20 transition-colors"
               >
                 Save
               </button>
               <button
                 onClick={() => { setShowReplace(false); setReplaceName(''); }}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 min-h-[44px] hover:border-sanctum-500 transition-colors"
               >
                 Cancel
               </button>
@@ -336,6 +340,7 @@ function SetRow({
           })}
           onFocus={onInputFocus}
           placeholder={lastSetData?.weight ? `${convertWeight(lastSetData.weight, unit)}` : unit}
+          aria-label={`Set ${set.setNumber} weight in ${unit}`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
 
@@ -351,6 +356,7 @@ function SetRow({
           })}
           onFocus={onInputFocus}
           placeholder={lastSetData?.reps ? `${lastSetData.reps}` : exercise.reps.split('-')[0]}
+          aria-label={`Set ${set.setNumber} reps`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
 
@@ -381,6 +387,7 @@ function SetRow({
         <button
           onClick={onRestEnd}
           className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
+          aria-label={`Skip rest timer, ${restRemaining} seconds remaining`}
         >
           Rest: {formatRest(restRemaining)}
         </button>

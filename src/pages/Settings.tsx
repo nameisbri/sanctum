@@ -188,6 +188,7 @@ export function Settings() {
                 value={resetInput}
                 onChange={(e) => setResetInput(e.target.value)}
                 placeholder="Type RESET to confirm"
+                aria-label="Type RESET to confirm data deletion"
                 className="w-full bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-sm text-sanctum-100 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors mb-3"
               />
               <div className="flex gap-3">

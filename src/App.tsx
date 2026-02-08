@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { ProgressProvider } from './contexts/ProgressContext';
 import { BottomNav } from './components/BottomNav';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Workout = lazy(() => import('./pages/Workout').then(m => ({ default: m.Workout })));
@@ -25,14 +26,18 @@ function AppLayout() {
 
   return (
     <>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/workout/:dayNumber" element={<Workout />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </Suspense>
+      <main>
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/workout/:dayNumber" element={<Workout />} />
+              <Route path="/history" element={<History />} />
+              <Route path="/settings" element={<Settings />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
+      </main>
       {!hideNav && <BottomNav />}
     </>
   );

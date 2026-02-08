@@ -126,6 +126,7 @@ export function WorkoutSummary({
           value={sessionNotes}
           onChange={(e) => onSessionNotesChange(e.target.value)}
           placeholder="Notes"
+          aria-label="Session notes"
           className="w-full bg-sanctum-900 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors mb-6"
           rows={3}
         />
