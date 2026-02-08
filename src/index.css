@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================
+   SANCTUM DESIGN SYSTEM — Global Styles
+   ============================================
+   Dark, elegant, minimal. No shadows. Borders only.
+   All transitions: 200ms ease-out.
+   ============================================ */
+
 :root {
   --safe-area-inset-top: env(safe-area-inset-top);
   --safe-area-inset-bottom: env(safe-area-inset-bottom);
@@ -13,35 +20,36 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
-  @apply bg-lavender-50 text-witch-900 antialiased;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  @apply bg-sanctum-950 text-sanctum-300 antialiased;
+  font-family: 'Inter', system-ui, sans-serif;
   padding-top: var(--safe-area-inset-top);
   padding-bottom: var(--safe-area-inset-bottom);
   overscroll-behavior: none;
 }
 
-/* Custom scrollbar */
+/* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-lavender-100;
+  @apply bg-sanctum-950;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-witch-500/40 rounded-full;
+  @apply bg-sanctum-700 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-witch-500/60;
+  @apply bg-sanctum-600;
 }
 
-/* Input styling */
+/* --- Input resets --- */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -53,67 +61,81 @@ input[type="number"] {
   appearance: textfield;
 }
 
-/* Card glass effect */
-.glass-card {
-  @apply bg-white/70 backdrop-blur-xl border border-witch-500/10 rounded-2xl shadow-sm;
-  box-shadow:
-    0 4px 20px -4px rgba(107, 77, 138, 0.08),
-    0 0 0 1px rgba(107, 77, 138, 0.05);
+/* ============================================
+   COMPONENT TOKENS
+   ============================================ */
+
+/* --- Cards ---
+   Usage: bg-sanctum-900 border border-sanctum-700 rounded-lg
+   Hover: border-sanctum-600
+*/
+@layer components {
+  .card {
+    @apply bg-sanctum-900 border border-sanctum-700 rounded-lg transition-colors duration-200 ease-out;
+  }
+
+  .card-hover {
+    @apply card hover:border-sanctum-600;
+  }
 }
 
-/* Gradient backgrounds */
-.gradient-purple {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+/* --- Buttons ---
+   Primary:   bg-blood-500 text-sanctum-50 → hover bg-blood-400
+   Secondary: transparent border-sanctum-600 text-sanctum-300 → hover border-sanctum-400
+   Ghost:     transparent text-sanctum-400 → hover text-sanctum-200
+*/
+@layer components {
+  .btn {
+    @apply px-4 py-2.5 rounded-lg font-medium transition-colors duration-200 ease-out active:scale-[0.97];
+  }
+
+  .btn-primary {
+    @apply btn bg-blood-500 text-sanctum-50 hover:bg-blood-400;
+  }
+
+  .btn-secondary {
+    @apply btn bg-transparent border border-sanctum-600 text-sanctum-300 hover:border-sanctum-400 hover:text-sanctum-200;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-sanctum-400 hover:text-sanctum-200 hover:bg-sanctum-850;
+  }
 }
 
-.gradient-pink {
-  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+/* --- Inputs ---
+   Default: bg-sanctum-800 border-sanctum-700 text-sanctum-100
+   Focus:   border-blood-500 ring-1 ring-blood-500/20
+   Placeholder: text-sanctum-500
+*/
+@layer components {
+  .input {
+    @apply bg-sanctum-800 border border-sanctum-700 text-sanctum-100 rounded-lg px-3 py-2
+           placeholder:text-sanctum-500
+           focus:outline-none focus:border-blood-500 focus:ring-1 focus:ring-blood-500/20
+           transition-colors duration-200 ease-out;
+  }
 }
 
-.gradient-coral {
-  background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+/* --- Focus visible ---
+   Keyboard-only focus ring using blood accent
+*/
+:focus-visible {
+  @apply outline-none ring-2 ring-blood-500/30 ring-offset-2 ring-offset-sanctum-950;
 }
 
-.gradient-gold {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
+/* --- Set states ---
+   Incomplete:  border-sanctum-700 (default card border)
+   In progress: border-sanctum-500 (has data, not checked)
+   Completed:   border-blood-500/50 bg-blood-500/5
+   PR:          border-metal-gold/50 bg-metal-gold/5
+*/
 
-.gradient-teal {
-  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
-}
+/* --- Progress ---
+   Bars/fills: bg-blood-500
+   PR/records: text-metal-gold, bg-metal-gold
+*/
 
-.gradient-mystic {
-  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #fbbf24 100%);
-}
-
-.gradient-witch {
-  background: linear-gradient(135deg, #1a1025 0%, #3d2a52 100%);
-}
-
-/* Background pattern */
-.pattern-dots {
-  background-image: radial-gradient(circle, rgba(139, 92, 246, 0.1) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* Shimmer animation */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(139, 92, 246, 0) 0%,
-    rgba(139, 92, 246, 0.08) 50%,
-    rgba(139, 92, 246, 0) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Ring animation for timer */
+/* --- Ring animation for timer --- */
 @keyframes ring-progress {
   from { stroke-dashoffset: 283; }
 }
@@ -122,111 +144,18 @@ input[type="number"] {
   animation: ring-progress 1s ease-out forwards;
 }
 
-/* Category colors */
-.category-chest {
-  @apply text-violet-600;
-}
-
-.category-back {
-  @apply text-blue-600;
-}
-
-.category-shoulders {
-  @apply text-amber-600;
-}
-
-.category-biceps {
-  @apply text-pink-600;
-}
-
-.category-triceps {
-  @apply text-rose-600;
-}
-
-.category-legs {
-  @apply text-teal-600;
-}
-
-.category-abs {
-  @apply text-orange-600;
-}
-
-/* PWA styles */
+/* --- PWA standalone --- */
 @media (display-mode: standalone) {
   body {
     padding-top: max(var(--safe-area-inset-top), 20px);
   }
 }
 
-/* Focus states */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:ring-offset-2 focus:ring-offset-lavender-50;
-}
-
-/* Button base */
-.btn {
-  @apply px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 active:scale-95;
-}
-
-.btn-primary {
-  @apply btn gradient-purple text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:brightness-110;
-}
-
-.btn-secondary {
-  @apply btn bg-white text-witch-700 hover:bg-lavender-100 border-2 border-witch-500/20;
-}
-
-.btn-ghost {
-  @apply btn bg-transparent text-witch-600 hover:text-witch-900 hover:bg-witch-500/10;
-}
-
-/* Card hover effects */
-.card-hover {
-  @apply transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10 hover:-translate-y-0.5;
-}
-
-/* Day card gradients */
-.day-1-gradient {
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-}
-
-.day-2-gradient {
-  background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
-}
-
-.day-3-gradient {
-  background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
-}
-
-.day-4-gradient {
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
-
-.day-5-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
-}
-
-.day-6-gradient {
-  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
-}
-
-/* Progress bar gradient */
-.progress-gradient {
-  background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 50%, #fbbf24 100%);
-}
-
-/* Fade in animation */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
+/* --- Category colors (dark palette) --- */
+.category-chest    { @apply text-blood-400; }
+.category-back     { @apply text-metal-silver; }
+.category-shoulders { @apply text-metal-gold; }
+.category-biceps   { @apply text-blood-300; }
+.category-triceps  { @apply text-metal-bronze; }
+.category-legs     { @apply text-metal-steel; }
+.category-abs      { @apply text-sanctum-400; }
