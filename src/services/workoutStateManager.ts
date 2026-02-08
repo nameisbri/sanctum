@@ -132,6 +132,17 @@ function isValidActiveWorkout(obj: unknown): obj is ActiveWorkout {
   return true;
 }
 
+export function clearAllActiveWorkouts(): void {
+  try {
+    const days = getAllActiveWorkoutDays();
+    for (const day of days) {
+      clearActiveWorkout(day);
+    }
+  } catch (error) {
+    console.error('Failed to clear all active workouts:', error);
+  }
+}
+
 export function getAllActiveWorkoutDays(): number[] {
   try {
     const dayNumbers: number[] = [];

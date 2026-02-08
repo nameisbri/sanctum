@@ -259,7 +259,7 @@ export function Workout() {
           <div className="flex items-center justify-between mb-2">
             <button
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 text-sanctum-400 hover:text-sanctum-200 transition-colors"
+              className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-400 hover:text-sanctum-200 transition-colors"
             >
               <ArrowLeft size={20} />
             </button>
@@ -273,17 +273,17 @@ export function Workout() {
             <div className="flex items-center gap-2">
               <button
                 onClick={togglePause}
-                className="text-sanctum-500 hover:text-sanctum-300 transition-colors p-1"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-500 hover:text-sanctum-300 transition-colors"
                 aria-label={paused ? 'Resume timer' : 'Pause timer'}
               >
-                {paused ? <Play size={14} /> : <Pause size={14} />}
+                {paused ? <Play size={16} /> : <Pause size={16} />}
               </button>
               <button
                 onClick={() => setShowResetConfirm(true)}
-                className="text-sanctum-500 hover:text-sanctum-300 transition-colors p-1"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-500 hover:text-sanctum-300 transition-colors"
                 aria-label="Reset workout"
               >
-                <RotateCcw size={14} />
+                <RotateCcw size={16} />
               </button>
               <span className={`text-sm font-mono tabular-nums ${paused ? 'text-blood-400' : 'text-sanctum-400'}`}>
                 {elapsed}
@@ -375,7 +375,7 @@ export function Workout() {
               </div>
               <button
                 onClick={() => setShowValidationErrors(false)}
-                className="text-sanctum-500 hover:text-sanctum-300 text-lg leading-none"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] text-sanctum-500 hover:text-sanctum-300 text-lg leading-none"
               >
                 ×
               </button>

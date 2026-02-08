@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { ChevronDown, ChevronUp, Dumbbell } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
 import { WorkoutLog, ExerciseLog } from '../types';
-import { calculateWorkoutVolume, getCurrentCycleVolume, formatVolume } from '../utils/volumeCalculator';
+import { calculateWorkoutVolume, getCurrentCycleVolume } from '../utils/volumeCalculator';
+import { useUnits, formatVolumeWithUnit, formatWeight } from '../hooks/useUnits';
 import { formatRelativeDate } from '../utils/dateFormatter';
 import { findPreviousWorkout, isSetPR } from '../services/prDetector';
 import { sanctumProgram } from '../data/program';
@@ -26,6 +27,7 @@ function formatDuration(seconds: number): string {
 
 export function History() {
   const { progress } = useProgress();
+  const { unit } = useUnits();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const sortedLogs = useMemo(() => {
@@ -57,13 +59,13 @@ export function History() {
           <div className="flex-1 bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
             <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">This Cycle</p>
             <p className="text-xl font-bold text-metal-gold font-mono">
-              {formatVolume(cycleVolume.totalVolume)}
+              {formatVolumeWithUnit(cycleVolume.totalVolume, unit)}
             </p>
           </div>
           <div className="flex-1 bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
             <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">All Time</p>
             <p className="text-xl font-bold text-metal-gold font-mono">
-              {formatVolume(allTimeVolume)}
+              {formatVolumeWithUnit(allTimeVolume, unit)}
             </p>
           </div>
         </div>
@@ -72,9 +74,7 @@ export function History() {
       {/* Workout list */}
       {sortedLogs.length === 0 ? (
         <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-8 text-center">
-          <Dumbbell size={36} className="mx-auto mb-3 text-sanctum-600" />
-          <p className="text-sanctum-400 font-medium">No workouts logged yet</p>
-          <p className="text-sm text-sanctum-500 mt-1">Complete your first workout to see history here</p>
+          <p className="text-sanctum-400">No sessions recorded.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -105,7 +105,7 @@ export function History() {
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-lg font-bold text-metal-gold font-mono">
-                        {formatVolume(volume)}
+                        {formatVolumeWithUnit(volume, unit)}
                       </span>
                       {log.duration != null && log.duration > 0 && (
                         <span className="text-sm text-sanctum-500">
@@ -134,6 +134,7 @@ export function History() {
                         key={i}
                         exercise={exercise}
                         previousWorkout={previousWorkout}
+                        unit={unit}
                       />
                     ))}
                   </div>
@@ -152,9 +153,10 @@ export function History() {
 interface ExerciseHistoryItemProps {
   exercise: ExerciseLog;
   previousWorkout: WorkoutLog | null;
+  unit: import('../hooks/useUnits').WeightUnit;
 }
 
-function ExerciseHistoryItem({ exercise, previousWorkout }: ExerciseHistoryItemProps) {
+function ExerciseHistoryItem({ exercise, previousWorkout, unit }: ExerciseHistoryItemProps) {
   const displayName = exercise.replacedWith
     ? `${exercise.exerciseName} → ${exercise.replacedWith}`
     : exercise.exerciseName;
@@ -199,7 +201,7 @@ function ExerciseHistoryItem({ exercise, previousWorkout }: ExerciseHistoryItemP
                   : 'text-sanctum-300 bg-sanctum-800 border-sanctum-700'
               }`}
             >
-              {set.weight} lb × {set.reps}
+              {formatWeight(set.weight ?? 0, unit)} × {set.reps}
               {pr && <span className="ml-1 text-metal-gold">★</span>}
             </span>
           );

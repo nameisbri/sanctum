@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { Exercise, ExerciseLog, SetLog } from '../types';
 import { getRestTimerSeconds } from '../data/program';
+import { useUnits, convertWeight } from '../hooks/useUnits';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -40,6 +41,7 @@ export function ExerciseCard({
   onReplaceExercise,
   lastExerciseData,
 }: ExerciseCardProps) {
+  const { unit } = useUnits();
   const [showNotes, setShowNotes] = useState(!!exerciseLog.notes);
   const [showReplace, setShowReplace] = useState(false);
   const [replaceName, setReplaceName] = useState('');
@@ -127,7 +129,7 @@ export function ExerciseCard({
                     key={i}
                     className="text-xs text-sanctum-400 font-mono bg-sanctum-850 px-2 py-1 rounded border border-sanctum-700"
                   >
-                    {set.weight ?? '—'}lb × {set.reps ?? '—'}
+                    {set.weight != null ? convertWeight(set.weight, unit) : '—'} {unit} × {set.reps ?? '—'}
                   </span>
                 ))}
               </div>
@@ -157,17 +159,17 @@ export function ExerciseCard({
           {/* Notes toggle */}
           <button
             onClick={() => setShowNotes(!showNotes)}
-            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors"
+            className="mt-3 flex items-center gap-1.5 text-xs text-sanctum-500 hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
           >
             <MessageSquare size={12} />
-            {showNotes ? 'Hide notes' : 'Notes'}
+            Notes
           </button>
 
           {showNotes && (
             <textarea
               value={exerciseLog.notes}
               onChange={(e) => onUpdateNotes(exerciseIndex, e.target.value)}
-              placeholder="Notes..."
+              placeholder="Notes"
               className="mt-2 w-full bg-sanctum-800 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors"
               rows={2}
             />
@@ -178,13 +180,13 @@ export function ExerciseCard({
             <div className="mt-3 flex items-center gap-2">
               <button
                 onClick={() => setShowReplace(true)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 Replace
               </button>
               <button
                 onClick={() => onSkipExercise(exerciseIndex, !isSkipped)}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 hover:text-sanctum-300 transition-colors"
               >
                 {isSkipped ? 'Unskip' : 'Skip'}
               </button>
@@ -196,19 +198,19 @@ export function ExerciseCard({
                 value={replaceName}
                 onChange={(e) => setReplaceName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleReplace()}
-                placeholder="Replace with:"
-                className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-1.5 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
+                placeholder="Replace with"
+                className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-sm text-sanctum-200 placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50"
                 autoFocus
               />
               <button
                 onClick={handleReplace}
-                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-1.5 hover:bg-blood-900/20 transition-colors"
+                className="text-xs text-blood-400 border border-blood-800/30 rounded-lg px-3 py-2.5 hover:bg-blood-900/20 transition-colors"
               >
                 Save
               </button>
               <button
                 onClick={() => { setShowReplace(false); setReplaceName(''); }}
-                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-1.5 hover:border-sanctum-500 transition-colors"
+                className="text-xs text-sanctum-400 border border-sanctum-700 rounded-lg px-3 py-2.5 hover:border-sanctum-500 transition-colors"
               >
                 Cancel
               </button>
@@ -249,6 +251,7 @@ function SetRow({
   onRestEnd,
   onInputFocus,
 }: SetRowProps) {
+  const { unit } = useUnits();
   const restDuration = getRestTimerSeconds(exercise.category);
   const [restRemaining, setRestRemaining] = useState(0);
 
@@ -317,7 +320,7 @@ function SetRow({
             weight: e.target.value ? parseFloat(e.target.value) : null,
           })}
           onFocus={onInputFocus}
-          placeholder={lastSetData?.weight ? `${lastSetData.weight}` : 'lb'}
+          placeholder={lastSetData?.weight ? `${convertWeight(lastSetData.weight, unit)}` : unit}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
         />
 
@@ -339,7 +342,7 @@ function SetRow({
         {/* Complete circle */}
         <button
           onClick={() => onSetComplete(exerciseIndex, setIndex)}
-          className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
+          className={`w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0 ${
             set.completed
               ? 'bg-blood-500 border-blood-500'
               : 'border-sanctum-600 hover:border-sanctum-400'
@@ -358,7 +361,7 @@ function SetRow({
       {isResting && restRemaining > 0 && (
         <button
           onClick={onRestEnd}
-          className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors"
+          className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
         >
           Rest: {formatRest(restRemaining)}
         </button>

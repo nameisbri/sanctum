@@ -6,7 +6,7 @@ import { BottomNav } from './components/BottomNav';
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
 const Workout = lazy(() => import('./pages/Workout').then(m => ({ default: m.Workout })));
 const History = lazy(() => import('./pages/History').then(m => ({ default: m.History })));
-const DesignSystem = lazy(() => import('./pages/DesignSystem').then(m => ({ default: m.DesignSystem })));
+const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
 
 function PageLoader() {
   return (
@@ -30,7 +30,7 @@ function AppLayout() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/workout/:dayNumber" element={<Workout />} />
           <Route path="/history" element={<History />} />
-          <Route path="/design" element={<DesignSystem />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </Suspense>
       {!hideNav && <BottomNav />}

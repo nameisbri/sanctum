@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { UserProgress, WorkoutLog, ExerciseLog } from '../types';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
+import { clearAllActiveWorkouts } from '../services/workoutStateManager';
 
 const STORAGE_KEY = 'sanctum-progress';
 
@@ -31,6 +32,7 @@ function saveProgress(progress: UserProgress) {
 interface ProgressContextType {
   progress: UserProgress;
   updateCycle: (cycle: number) => void;
+  updateDeloadInterval: (weeks: number) => void;
   addWorkoutLog: (log: WorkoutLog) => void;
   getLastWorkoutForDay: (dayNumber: number) => WorkoutLog | null;
   getExerciseHistory: (exerciseName: string) => WorkoutLog[];
@@ -55,6 +57,13 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress(prev => ({
       ...prev,
       currentCycle: cycle,
+    }));
+  }, []);
+
+  const updateDeloadInterval = useCallback((weeks: number) => {
+    setProgress(prev => ({
+      ...prev,
+      deloadIntervalWeeks: weeks,
     }));
   }, []);
 
@@ -104,7 +113,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `sanctum-data-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `sanctum-backup-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -114,6 +123,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const importData = useCallback((jsonData: string) => {
     try {
       const parsed = JSON.parse(jsonData) as UserProgress;
+      if (
+        typeof parsed.currentCycle !== 'number' ||
+        typeof parsed.cycleStartDate !== 'string' ||
+        typeof parsed.deloadIntervalWeeks !== 'number' ||
+        !Array.isArray(parsed.workoutLogs)
+      ) {
+        return false;
+      }
       setProgress(parsed);
       return true;
     } catch {
@@ -122,6 +139,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resetProgress = useCallback(() => {
+    clearAllActiveWorkouts();
     setProgress(DEFAULT_PROGRESS);
   }, []);
 
@@ -129,6 +147,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     <ProgressContext.Provider value={{
       progress,
       updateCycle,
+      updateDeloadInterval,
       addWorkoutLog,
       getLastWorkoutForDay,
       getExerciseHistory,
