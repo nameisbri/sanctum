@@ -9,6 +9,10 @@ vi.mock('../data/program', () => ({
   getRestTimerSeconds: () => 180,
 }));
 
+vi.mock('../services/prDetector', () => ({
+  isSetPR: () => false,
+}));
+
 const mockExercise: Exercise = {
   order: 1,
   name: 'Incline Barbell Press',
@@ -41,6 +45,7 @@ function createDefaultProps(overrides: Partial<Parameters<typeof ExerciseCard>[0
     onSkipExercise: vi.fn(),
     onReplaceExercise: vi.fn(),
     lastExerciseData: null,
+    previousWorkout: null,
     ...overrides,
   };
 }

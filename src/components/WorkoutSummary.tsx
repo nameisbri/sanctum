@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { ExerciseLog } from '../types';
+import { ExerciseLog, WorkoutLog } from '../types';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
 import { useUnits, formatVolumeWithUnit } from '../hooks/useUnits';
+import { isSetPR } from '../services/prDetector';
 
 interface WorkoutSummaryProps {
   exerciseLogs: ExerciseLog[];
@@ -9,6 +10,7 @@ interface WorkoutSummaryProps {
   sessionNotes: string;
   onSessionNotesChange: (notes: string) => void;
   onSave: () => void;
+  previousWorkout: WorkoutLog | null;
 }
 
 const closingLines = [
@@ -38,6 +40,7 @@ export function WorkoutSummary({
   sessionNotes,
   onSessionNotesChange,
   onSave,
+  previousWorkout,
 }: WorkoutSummaryProps) {
   const { unit } = useUnits();
   const closingLine = useMemo(
@@ -53,6 +56,12 @@ export function WorkoutSummary({
     (acc, log) => acc + (log.skipped ? 0 : log.sets.filter((s) => s.completed).length),
     0
   );
+
+  const prCount = exerciseLogs.reduce((acc, log) => {
+    if (log.skipped) return acc;
+    const name = log.replacedWith || log.exerciseName;
+    return acc + log.sets.filter((s) => isSetPR(s, name, previousWorkout)).length;
+  }, 0);
 
   return (
     <div className="fixed inset-0 z-50 bg-sanctum-950 flex flex-col items-center justify-center px-6 animate-fade-in">
@@ -99,6 +108,16 @@ export function WorkoutSummary({
                 {formatDuration(duration)}
               </p>
             </div>
+            {prCount > 0 && (
+              <div>
+                <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
+                  PRs
+                </p>
+                <p className="text-xl font-bold text-metal-gold">
+                  {prCount} ★
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
