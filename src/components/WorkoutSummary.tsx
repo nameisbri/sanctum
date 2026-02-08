@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ExerciseLog } from '../types';
-import { calculateTotalVolume, formatVolume } from '../utils/volumeCalculator';
+import { calculateTotalVolume } from '../utils/volumeCalculator';
+import { useUnits, formatVolumeWithUnit } from '../hooks/useUnits';
 
 interface WorkoutSummaryProps {
   exerciseLogs: ExerciseLog[];
@@ -38,6 +39,7 @@ export function WorkoutSummary({
   onSessionNotesChange,
   onSave,
 }: WorkoutSummaryProps) {
+  const { unit } = useUnits();
   const closingLine = useMemo(
     () => closingLines[Math.floor(Math.random() * closingLines.length)],
     []
@@ -65,10 +67,10 @@ export function WorkoutSummary({
           {/* Volume — hero stat */}
           <div>
             <p className="text-xs text-sanctum-500 uppercase tracking-widest mb-1">
-              Total Volume
+              Volume
             </p>
             <p className="text-3xl font-bold text-metal-gold font-mono">
-              {formatVolume(totalVolume)}
+              {formatVolumeWithUnit(totalVolume, unit)}
             </p>
           </div>
 
@@ -104,7 +106,7 @@ export function WorkoutSummary({
         <textarea
           value={sessionNotes}
           onChange={(e) => onSessionNotesChange(e.target.value)}
-          placeholder="Session notes..."
+          placeholder="Notes"
           className="w-full bg-sanctum-900 border border-sanctum-700 rounded-lg p-3 text-sm text-sanctum-200 placeholder:text-sanctum-600 resize-none focus:outline-none focus:border-blood-500/50 transition-colors mb-6"
           rows={3}
         />

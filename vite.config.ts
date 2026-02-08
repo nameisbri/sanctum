@@ -19,33 +19,25 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+      includeAssets: ['icon-32x32.png', 'icon-180x180.png'],
       manifest: {
         name: 'Sanctum',
         short_name: 'Sanctum',
-        description: 'Personal Workout Tracker',
+        description: 'Private workout log.',
         theme_color: '#0a0a0b',
         background_color: '#0a0a0b',
         display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
         start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/icon-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
           }
         ]
       },

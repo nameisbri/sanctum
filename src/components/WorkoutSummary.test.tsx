@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { WorkoutSummary } from './WorkoutSummary';
 import { ExerciseLog } from '../types';
-import { formatVolume, calculateTotalVolume } from '../utils/volumeCalculator';
+import { calculateTotalVolume } from '../utils/volumeCalculator';
+import { formatVolumeWithUnit } from '../hooks/useUnits';
 
 const mockExerciseLogs: ExerciseLog[] = [
   {
@@ -54,7 +55,7 @@ describe('WorkoutSummary', () => {
     renderSummary();
 
     const expectedVolume = calculateTotalVolume(mockExerciseLogs);
-    const expectedText = formatVolume(expectedVolume);
+    const expectedText = formatVolumeWithUnit(expectedVolume, 'lb');
 
     expect(screen.getByText(expectedText)).toBeInTheDocument();
   });
@@ -86,7 +87,7 @@ describe('WorkoutSummary', () => {
   it('renders session notes textarea with provided value', () => {
     renderSummary({ sessionNotes: 'Felt strong today' });
 
-    const textarea = screen.getByPlaceholderText('Session notes...');
+    const textarea = screen.getByPlaceholderText('Notes');
     expect(textarea).toHaveValue('Felt strong today');
   });
 
@@ -94,7 +95,7 @@ describe('WorkoutSummary', () => {
     const onSessionNotesChange = vi.fn();
     renderSummary({ onSessionNotesChange });
 
-    const textarea = screen.getByPlaceholderText('Session notes...');
+    const textarea = screen.getByPlaceholderText('Notes');
     fireEvent.change(textarea, { target: { value: 'Great workout' } });
 
     expect(onSessionNotesChange).toHaveBeenCalledWith('Great workout');

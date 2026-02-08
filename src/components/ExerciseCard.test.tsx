@@ -138,7 +138,7 @@ describe('ExerciseCard', () => {
       const notesButton = screen.getByText('Notes');
       await user.click(notesButton);
 
-      const textarea = screen.getByPlaceholderText('Notes...');
+      const textarea = screen.getByPlaceholderText('Notes');
       expect(textarea).toBeInTheDocument();
 
       await user.type(textarea, 'Felt strong');
@@ -208,7 +208,7 @@ describe('ExerciseCard', () => {
       await user.click(replaceButton);
 
       // Type a replacement name
-      const replaceInput = screen.getByPlaceholderText('Replace with:');
+      const replaceInput = screen.getByPlaceholderText('Replace with');
       expect(replaceInput).toBeInTheDocument();
 
       await user.type(replaceInput, 'Dumbbell Press');
@@ -243,8 +243,8 @@ describe('ExerciseCard', () => {
       );
 
       expect(screen.getByText('Previous')).toBeInTheDocument();
-      expect(screen.getByText('135lb × 10')).toBeInTheDocument();
-      expect(screen.getByText('135lb × 8')).toBeInTheDocument();
+      expect(screen.getByText('135 lb × 10')).toBeInTheDocument();
+      expect(screen.getByText('135 lb × 8')).toBeInTheDocument();
     });
   });
 
