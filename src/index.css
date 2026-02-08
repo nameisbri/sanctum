@@ -71,7 +71,7 @@ input[type="number"] {
 */
 @layer components {
   .card {
-    @apply bg-sanctum-900 border border-sanctum-700 rounded-lg transition-colors duration-200 ease-out;
+    @apply bg-sanctum-900 border border-sanctum-700 rounded-xl transition-colors duration-200 ease-out;
   }
 
   .card-hover {

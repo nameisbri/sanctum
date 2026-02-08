@@ -46,7 +46,7 @@ export function Dashboard() {
               onClick={recordDeload}
               className="text-xs text-sanctum-400 hover:text-sanctum-300 transition-colors ml-3 flex-shrink-0 py-0.5"
             >
-              Dismiss
+              Not now
             </button>
           </div>
         )}

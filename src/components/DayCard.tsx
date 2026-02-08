@@ -29,7 +29,7 @@ export function DayCard({
         <div className="flex items-baseline gap-0">
           <span className="text-sanctum-400 text-sm">Day {dayNumber}</span>
           <span className="text-sanctum-600 mx-2">&middot;</span>
-          <span className="text-sanctum-100 font-medium">{dayName}</span>
+          <span className="text-sanctum-100 font-medium truncate" title={dayName}>{dayName}</span>
         </div>
         <span className="text-sanctum-500 text-sm">{exerciseCount} exercises</span>
       </div>

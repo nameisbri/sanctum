@@ -84,20 +84,20 @@ describe('History', () => {
   it('shows empty state when no completed workouts', () => {
     setupMock();
     renderHistory();
-    expect(screen.getByText('No sessions recorded.')).toBeInTheDocument();
+    expect(screen.getByText('No sessions recorded yet.')).toBeInTheDocument();
   });
 
   it('hides empty state when workouts exist', () => {
     setupMock([makeWorkout()]);
     renderHistory();
-    expect(screen.queryByText('No sessions recorded.')).not.toBeInTheDocument();
+    expect(screen.queryByText('No sessions recorded yet.')).not.toBeInTheDocument();
   });
 
   it('does not show incomplete workouts', () => {
     setupMock([makeWorkout({ completed: false, dayName: 'Incomplete Day' })]);
     renderHistory();
     expect(screen.queryByText('Incomplete Day')).not.toBeInTheDocument();
-    expect(screen.getByText('No sessions recorded.')).toBeInTheDocument();
+    expect(screen.getByText('No sessions recorded yet.')).toBeInTheDocument();
   });
 
   it('renders workout card with day name and volume', () => {

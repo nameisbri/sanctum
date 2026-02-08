@@ -3,6 +3,7 @@ import { ExerciseLog, WorkoutLog } from '../types';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
 import { useUnits, formatVolumeWithUnit } from '../hooks/useUnits';
 import { isSetPR } from '../services/prDetector';
+import { formatDuration } from '../utils/timeFormatter';
 
 interface WorkoutSummaryProps {
   exerciseLogs: ExerciseLog[];
@@ -23,16 +24,6 @@ const closingLines = [
   'Progress locked.',
   'This is how legends train \u2014 alone, in silence.',
 ];
-
-function formatDuration(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-
-  if (hrs > 0) {
-    return `${hrs}h ${mins}m`;
-  }
-  return `${mins}m`;
-}
 
 export function WorkoutSummary({
   exerciseLogs,

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { Exercise, ExerciseLog, SetLog, WorkoutLog } from '../types';
 import { getRestTimerSeconds } from '../data/program';
 import { useUnits, convertWeight } from '../hooks/useUnits';
 import { isSetPR } from '../services/prDetector';
+import { CATEGORY_BADGE_COLORS } from '../constants/categoryColors';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -20,17 +21,7 @@ interface ExerciseCardProps {
   previousWorkout: WorkoutLog | null;
 }
 
-const categoryBadgeColors: Record<string, string> = {
-  chest: 'bg-blood-900/40 text-blood-400 border-blood-800/30',
-  back: 'bg-sanctum-800 text-metal-silver border-sanctum-700',
-  shoulders: 'bg-sanctum-800 text-sanctum-300 border-sanctum-700',
-  biceps: 'bg-blood-900/30 text-blood-400 border-blood-800/20',
-  triceps: 'bg-blood-900/20 text-blood-300 border-blood-800/20',
-  legs: 'bg-sanctum-800 text-sanctum-200 border-sanctum-600',
-  abs: 'bg-sanctum-800 text-metal-bronze border-sanctum-700',
-};
-
-export function ExerciseCard({
+export const ExerciseCard = memo(function ExerciseCard({
   exercise,
   exerciseLog,
   exerciseIndex,
@@ -59,7 +50,7 @@ export function ExerciseCard({
     ? `${exercise.name} → ${exerciseLog.replacedWith}`
     : exercise.name;
 
-  const badgeColor = categoryBadgeColors[exercise.category] || categoryBadgeColors.back;
+  const badgeColor = CATEGORY_BADGE_COLORS[exercise.category] || CATEGORY_BADGE_COLORS.back;
 
   const handleReplace = () => {
     if (replaceName.trim()) {
@@ -89,7 +80,7 @@ export function ExerciseCard({
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-medium text-sanctum-100 truncate text-sm">
+            <h3 className="font-medium text-sanctum-100 truncate text-sm" title={displayName}>
               {displayName}
             </h3>
             {isSkipped && (
@@ -234,7 +225,7 @@ export function ExerciseCard({
       )}
     </div>
   );
-}
+});
 
 // --- SetRow sub-component ---
 

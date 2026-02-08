@@ -5,25 +5,10 @@ import { WorkoutLog, ExerciseLog } from '../types';
 import { calculateWorkoutVolume, getCurrentCycleVolume } from '../utils/volumeCalculator';
 import { useUnits, formatVolumeWithUnit, formatWeight } from '../hooks/useUnits';
 import { formatRelativeDate } from '../utils/dateFormatter';
+import { formatDuration } from '../utils/timeFormatter';
 import { findPreviousWorkout, isSetPR } from '../services/prDetector';
 import { sanctumProgram } from '../data/program';
-
-const categoryBadgeColors: Record<string, string> = {
-  chest: 'bg-blood-900/40 text-blood-400 border-blood-800/30',
-  back: 'bg-sanctum-800 text-metal-silver border-sanctum-700',
-  shoulders: 'bg-sanctum-800 text-sanctum-300 border-sanctum-700',
-  biceps: 'bg-blood-900/30 text-blood-400 border-blood-800/20',
-  triceps: 'bg-blood-900/20 text-blood-300 border-blood-800/20',
-  legs: 'bg-sanctum-800 text-sanctum-200 border-sanctum-600',
-  abs: 'bg-sanctum-800 text-metal-bronze border-sanctum-700',
-};
-
-function formatDuration(seconds: number): string {
-  const hrs = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  if (hrs > 0) return `${hrs}h ${mins}m`;
-  return `${mins}m`;
-}
+import { CATEGORY_BADGE_COLORS } from '../constants/categoryColors';
 
 export function History() {
   const { progress } = useProgress();
@@ -74,7 +59,8 @@ export function History() {
       {/* Workout list */}
       {sortedLogs.length === 0 ? (
         <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-8 text-center">
-          <p className="text-sanctum-400">No sessions recorded.</p>
+          <p className="text-sanctum-400">No sessions recorded yet.</p>
+          <p className="text-sanctum-500 text-sm mt-1">Complete your first workout to see history here.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -99,7 +85,7 @@ export function History() {
                         {formatRelativeDate(log.date)}
                       </span>
                       <span className="text-sanctum-600">·</span>
-                      <span className="text-sm font-medium text-sanctum-200 truncate">
+                      <span className="text-sm font-medium text-sanctum-200 truncate" title={log.dayName}>
                         {log.dayName}
                       </span>
                     </div>
@@ -179,12 +165,12 @@ function ExerciseHistoryItem({ exercise, previousWorkout, unit }: ExerciseHistor
 
   // Determine category from program data or fall back
   const category = getCategoryFromExerciseName(exercise.exerciseName);
-  const badgeColor = categoryBadgeColors[category] || 'bg-sanctum-800 text-sanctum-400 border-sanctum-700';
+  const badgeColor = CATEGORY_BADGE_COLORS[category] || 'bg-sanctum-800 text-sanctum-400 border-sanctum-700';
 
   return (
     <div className="bg-sanctum-850 border border-sanctum-700/50 rounded-lg p-3">
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-sm font-medium text-sanctum-200 truncate">{displayName}</span>
+        <span className="text-sm font-medium text-sanctum-200 truncate" title={displayName}>{displayName}</span>
         <span className={`text-xs px-1.5 py-0.5 rounded border flex-shrink-0 ${badgeColor}`}>
           {category}
         </span>
