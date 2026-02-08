@@ -11,6 +11,7 @@ import { ActiveWorkout } from '../types';
 const mockWorkout: ActiveWorkout = {
   dayNumber: 1,
   cycle: 1,
+  startTime: 1700000000000,
   exercises: [
     {
       exerciseName: 'Incline Barbell Press',

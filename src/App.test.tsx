@@ -32,6 +32,9 @@ vi.mock('./contexts/ProgressContext', async () => {
 vi.mock('./services/workoutStateManager', () => ({
   hasActiveWorkout: vi.fn().mockReturnValue(false),
   getAllActiveWorkoutDays: vi.fn().mockReturnValue([]),
+  getActiveWorkout: vi.fn().mockReturnValue(null),
+  saveActiveWorkout: vi.fn().mockReturnValue(true),
+  clearActiveWorkout: vi.fn().mockReturnValue(true),
 }));
 
 function renderApp(initialRoute: string) {
@@ -60,7 +63,7 @@ describe('App', () => {
   it('hides BottomNav on workout routes', async () => {
     renderApp('/workout/1');
     await waitFor(() => {
-      expect(screen.getByText('Workout')).toBeInTheDocument();
+      expect(screen.getByText('Chest/Back')).toBeInTheDocument();
     });
     expect(screen.queryByLabelText('Main navigation')).not.toBeInTheDocument();
   });

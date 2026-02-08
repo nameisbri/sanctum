@@ -43,6 +43,7 @@ export interface ExerciseLog {
   sets: SetLog[];
   notes: string;
   skipped?: boolean;
+  replacedWith?: string;
 }
 
 export interface WorkoutLog {
@@ -72,6 +73,7 @@ export interface ActiveWorkout {
   dayNumber: number;
   cycle: number;
   exercises: ExerciseLog[];
+  startTime: number;
 }
 
 // Validation types

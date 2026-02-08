@@ -101,6 +101,10 @@ function isValidActiveWorkout(obj: unknown): obj is ActiveWorkout {
     return false;
   }
 
+  if (typeof workout.startTime !== 'number') {
+    return false;
+  }
+
   if (!Array.isArray(workout.exercises)) {
     return false;
   }
