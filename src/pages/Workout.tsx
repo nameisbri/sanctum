@@ -59,6 +59,17 @@ export function Workout() {
     return firstIncomplete >= 0 ? firstIncomplete : 0;
   });
 
+  // Escape key collapses expanded exercise
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && expandedExercise >= 0) {
+        setExpandedExercise(-1);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [expandedExercise]);
+
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [sessionNotes, setSessionNotes] = useState('');

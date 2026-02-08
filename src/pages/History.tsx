@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
 import { WorkoutLog, ExerciseLog } from '../types';
@@ -14,6 +14,17 @@ export function History() {
   const { progress } = useProgress();
   const { unit } = useUnits();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Escape key collapses expanded card
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && expandedId !== null) {
+        setExpandedId(null);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [expandedId]);
 
   const sortedLogs = useMemo(() => {
     return [...progress.workoutLogs]
