@@ -45,6 +45,7 @@ export default {
       animation: {
         'slide-up': 'slideUp 0.3s ease-out',
         'fade-in': 'fadeIn 0.2s ease-out',
+        'slide-up-sheet': 'slideUpSheet 0.3s ease-out',
       },
       keyframes: {
         slideUp: {
@@ -54,6 +55,10 @@ export default {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        slideUpSheet: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
         },
       },
     },

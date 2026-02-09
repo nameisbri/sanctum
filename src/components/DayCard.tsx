@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { formatRelativeDate } from '../utils/dateFormatter';
 
 interface DayCardProps {
@@ -7,6 +6,7 @@ interface DayCardProps {
   exerciseCount: number;
   lastWorkoutDate: string | null;
   hasActiveWorkout: boolean;
+  onClick: () => void;
 }
 
 function shouldShowBottomRow(lastWorkoutDate: string | null, hasActiveWorkout: boolean): boolean {
@@ -19,11 +19,13 @@ export function DayCard({
   exerciseCount,
   lastWorkoutDate,
   hasActiveWorkout,
+  onClick,
 }: DayCardProps) {
   return (
-    <Link
-      to={`/workout/${dayNumber}`}
-      className="card-hover block p-4 active:scale-[0.98] transition-transform duration-200 ease-out"
+    <button
+      type="button"
+      onClick={onClick}
+      className="card-hover block w-full text-left p-4 active:scale-[0.98] transition-transform duration-200 ease-out"
     >
       <div className="flex items-baseline justify-between">
         <div className="flex items-baseline gap-0">
@@ -46,6 +48,6 @@ export function DayCard({
           )}
         </div>
       )}
-    </Link>
+    </button>
   );
 }

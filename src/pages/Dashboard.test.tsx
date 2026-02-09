@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { Dashboard } from './Dashboard';
 
@@ -9,6 +10,11 @@ vi.mock('../contexts/ProgressContext', () => ({
 
 vi.mock('../services/workoutStateManager', () => ({
   hasActiveWorkout: vi.fn().mockReturnValue(false),
+}));
+
+vi.mock('../hooks/useUnits', () => ({
+  useUnits: () => ({ unit: 'lb' as const, setUnit: vi.fn() }),
+  formatWeight: (lbs: number, unit: string) => `${lbs} ${unit}`,
 }));
 
 import { useProgress } from '../contexts/ProgressContext';
@@ -119,5 +125,19 @@ describe('Dashboard', () => {
     });
     expect(screen.getByText(/Last trained:/)).toBeInTheDocument();
     expect(screen.getByText('Feb 6')).toBeInTheDocument();
+  });
+
+  it('does not show workout preview on initial render', () => {
+    renderDashboard();
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('opens workout preview when a DayCard is clicked', async () => {
+    renderDashboard();
+    const buttons = screen.getAllByRole('button');
+    // First button is Day 1 card (deload button not rendered by default)
+    await userEvent.click(buttons[0]);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByText(/Day 1 — Chest\/Back/)).toBeInTheDocument();
   });
 });

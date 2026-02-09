@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useProgress } from '../contexts/ProgressContext';
 import { sanctumProgram } from '../data/program';
 import { hasActiveWorkout } from '../services/workoutStateManager';
 import { formatRelativeDate } from '../utils/dateFormatter';
 import { DayCard } from '../components/DayCard';
+import { WorkoutPreview } from '../components/WorkoutPreview';
 
 export function Dashboard() {
   const { progress, getLastWorkoutForDay, shouldSuggestDeload, recordDeload } = useProgress();
+  const [previewDay, setPreviewDay] = useState<number | null>(null);
 
   const showDeload = shouldSuggestDeload();
 
@@ -63,6 +66,7 @@ export function Dashboard() {
               exerciseCount={day.exercises.length}
               lastWorkoutDate={getLastWorkoutForDay(day.dayNumber)?.date ?? null}
               hasActiveWorkout={hasActiveWorkout(day.dayNumber)}
+              onClick={() => setPreviewDay(day.dayNumber)}
             />
           ))}
         </div>
@@ -82,6 +86,13 @@ export function Dashboard() {
           </span>
         </div>
       </div>
+
+      {previewDay !== null && (
+        <WorkoutPreview
+          dayNumber={previewDay}
+          onClose={() => setPreviewDay(null)}
+        />
+      )}
     </div>
   );
 }

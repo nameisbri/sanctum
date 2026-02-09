@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 import { DayCard } from './DayCard';
 
 interface DayCardProps {
@@ -9,6 +9,7 @@ interface DayCardProps {
   exerciseCount: number;
   lastWorkoutDate: string | null;
   hasActiveWorkout: boolean;
+  onClick: () => void;
 }
 
 function renderDayCard(overrides: Partial<DayCardProps> = {}) {
@@ -18,13 +19,10 @@ function renderDayCard(overrides: Partial<DayCardProps> = {}) {
     exerciseCount: 8,
     lastWorkoutDate: null,
     hasActiveWorkout: false,
+    onClick: vi.fn(),
     ...overrides,
   };
-  return render(
-    <MemoryRouter>
-      <DayCard {...defaultProps} />
-    </MemoryRouter>
-  );
+  return { ...render(<DayCard {...defaultProps} />), props: defaultProps };
 }
 
 describe('DayCard', () => {
@@ -63,9 +61,15 @@ describe('DayCard', () => {
     expect(screen.queryByText('Resume')).not.toBeInTheDocument();
   });
 
-  it('card links to correct URL', () => {
-    renderDayCard({ dayNumber: 1 });
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/workout/1');
+  it('renders as a button', () => {
+    renderDayCard();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('calls onClick when pressed', async () => {
+    const onClick = vi.fn();
+    renderDayCard({ onClick });
+    await userEvent.click(screen.getByRole('button'));
+    expect(onClick).toHaveBeenCalledOnce();
   });
 });
