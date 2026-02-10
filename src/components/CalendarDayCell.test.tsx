@@ -34,10 +34,10 @@ describe('CalendarDayCell', () => {
   it('renders day abbreviation for projected cell', () => {
     const cell = makeCell({
       type: 'projected',
-      workout: { dayNumber: 4, dayName: 'Push', cycle: 1 },
+      workout: { dayNumber: 4, dayName: 'Pull', cycle: 1 },
     });
     render(<CalendarDayCell cell={cell} onTap={vi.fn()} />);
-    expect(screen.getByText('Push')).toBeInTheDocument();
+    expect(screen.getByText('Pull')).toBeInTheDocument();
   });
 
   it('calls onTap for past-completed cells', async () => {
@@ -76,5 +76,27 @@ describe('CalendarDayCell', () => {
     render(<CalendarDayCell cell={cell} onTap={vi.fn()} />);
     const dateEl = screen.getByText('10');
     expect(dateEl.className).toContain('font-bold');
+  });
+
+  it('renders moon icon for explicit-rest cell', () => {
+    const cell = makeCell({ type: 'explicit-rest' });
+    const { container } = render(<CalendarDayCell cell={cell} onTap={vi.fn()} />);
+    expect(container.querySelector('svg')).toBeInTheDocument();
+  });
+
+  it('today explicit-rest cell is tappable', async () => {
+    const onTap = vi.fn();
+    const cell = makeCell({ type: 'explicit-rest', isToday: true });
+    render(<CalendarDayCell cell={cell} onTap={onTap} />);
+    await userEvent.click(screen.getByRole('button'));
+    expect(onTap).toHaveBeenCalledWith(cell);
+  });
+
+  it('past explicit-rest cell is not tappable', async () => {
+    const onTap = vi.fn();
+    const cell = makeCell({ type: 'explicit-rest', isToday: false, date: '2026-02-05' });
+    render(<CalendarDayCell cell={cell} onTap={onTap} />);
+    await userEvent.click(screen.getByRole('button'));
+    expect(onTap).not.toHaveBeenCalled();
   });
 });

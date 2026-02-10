@@ -67,6 +67,7 @@ export interface UserProgress {
   lastDeloadDate?: string;
   isDeloadWeek: boolean;
   workoutLogs: WorkoutLog[];
+  restDays: string[];
 }
 
 // UI State types

@@ -11,6 +11,7 @@ const DEFAULT_PROGRESS: UserProgress = {
   deloadIntervalWeeks: 5,
   isDeloadWeek: false,
   workoutLogs: [],
+  restDays: [],
 };
 
 function loadProgress(): UserProgress {
@@ -44,6 +45,8 @@ interface ProgressContextType {
   endDeload: () => void;
   getLogsForCycle: (cycle: number) => WorkoutLog[];
   getCycleNumbers: () => number[];
+  addRestDay: (date: string) => void;
+  removeRestDay: (date: string) => void;
   exportData: () => void;
   importData: (jsonData: string) => boolean;
   resetProgress: () => void;
@@ -127,6 +130,20 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const addRestDay = useCallback((date: string) => {
+    setProgress(prev => ({
+      ...prev,
+      restDays: prev.restDays.includes(date) ? prev.restDays : [...prev.restDays, date],
+    }));
+  }, []);
+
+  const removeRestDay = useCallback((date: string) => {
+    setProgress(prev => ({
+      ...prev,
+      restDays: prev.restDays.filter(d => d !== date),
+    }));
+  }, []);
+
   const getLogsForCycle = useCallback((cycle: number): WorkoutLog[] => {
     return progress.workoutLogs
       .filter(log => log.cycle === cycle)
@@ -188,6 +205,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       recordDeload,
       startDeload,
       endDeload,
+      addRestDay,
+      removeRestDay,
       getLogsForCycle,
       getCycleNumbers,
       exportData,

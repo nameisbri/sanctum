@@ -22,7 +22,8 @@ export type CalendarCellType =
   | 'today'
   | 'projected'
   | 'rest'
-  | 'deload';
+  | 'deload'
+  | 'explicit-rest';
 
 export interface CalendarCell {
   date: string; // ISO YYYY-MM-DD
@@ -242,6 +243,9 @@ export function buildCalendarProjection(
     }
   }
 
+  // Rest days set
+  const restDaySet = new Set(progress.restDays ?? []);
+
   // Build past log map: date → WorkoutLog (most recent per date)
   const logByDate = new Map<string, WorkoutLog>();
   for (const log of progress.workoutLogs) {
@@ -254,9 +258,13 @@ export function buildCalendarProjection(
 
   // Project future workout days
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // If today is an explicit rest day, start projecting from tomorrow
+  const projectionStart = restDaySet.has(todayStr) ? addDays(today, 1) : today;
+
   // Project enough days to cover ~2 deload cycles ahead (~12 weeks = ~60 workouts)
   const projectedDays = projectFutureDays(
-    today,
+    projectionStart,
     nextWk.cycle,
     nextWk.dayNumber,
     frequency.avgDaysBetweenWorkouts,
@@ -265,8 +273,8 @@ export function buildCalendarProjection(
 
   const projectedByDate = new Map<string, ProjectedDay>();
   for (const pd of projectedDays) {
-    // Don't project on dates that fall in deload weeks
-    if (!deloadDateSet.has(pd.date)) {
+    // Don't project on dates that fall in deload weeks or explicit rest days
+    if (!deloadDateSet.has(pd.date) && !restDaySet.has(pd.date)) {
       if (!projectedByDate.has(pd.date)) {
         projectedByDate.set(pd.date, pd);
       }
@@ -312,6 +320,7 @@ export function buildCalendarProjection(
       let workout: CalendarCell['workout'];
 
       if (log) {
+        // Log always wins — past-completed takes priority over everything
         type = 'past-completed';
         workout = {
           dayNumber: log.dayNumber,
@@ -320,6 +329,8 @@ export function buildCalendarProjection(
           log,
           isDeload: log.isDeload,
         };
+      } else if (restDaySet.has(cellDateStr)) {
+        type = 'explicit-rest';
       } else if (isToday) {
         type = 'today';
         if (projected) {

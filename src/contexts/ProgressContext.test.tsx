@@ -230,4 +230,46 @@ describe('ProgressContext', () => {
     });
     expect(result.current.progress.isDeloadWeek).toBe(false);
   });
+
+  it('addRestDay appends date to restDays', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-10']);
+  });
+
+  it('addRestDay does not duplicate existing date', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+      result.current.addRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-10']);
+  });
+
+  it('removeRestDay filters date from restDays', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+      result.current.addRestDay('2026-02-11');
+    });
+    expect(result.current.progress.restDays).toHaveLength(2);
+    act(() => {
+      result.current.removeRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-11']);
+  });
+
+  it('loadProgress handles missing restDays from localStorage gracefully', () => {
+    const oldData = {
+      currentCycle: 2,
+      cycleStartDate: '2025-06-01',
+      deloadIntervalWeeks: 4,
+      workoutLogs: [],
+    };
+    localStorage.setItem('sanctum-progress', JSON.stringify(oldData));
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    expect(result.current.progress.restDays).toEqual([]);
+  });
 });

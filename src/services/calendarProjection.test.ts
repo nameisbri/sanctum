@@ -29,6 +29,7 @@ function makeProgress(overrides: Partial<UserProgress> = {}): UserProgress {
     deloadIntervalWeeks: 5,
     isDeloadWeek: false,
     workoutLogs: [],
+    restDays: [],
     ...overrides,
   };
 }
@@ -287,5 +288,42 @@ describe('buildCalendarProjection', () => {
     expect(result.frequency.confidence).toBe('default');
     expect(result.weeks.length).toBeGreaterThan(0);
     expect(result.nextWorkout).toBeDefined();
+  });
+
+  it('rest day today shifts projection to tomorrow — today cell is explicit-rest', () => {
+    const progress = makeProgress({ restDays: ['2026-02-10'] });
+    const result = buildCalendarProjection(progress, now);
+
+    const todayCell = result.weeks.flatMap(w => w.cells).find(c => c.date === '2026-02-10');
+    expect(todayCell?.type).toBe('explicit-rest');
+
+    // No projected workout should be on today
+    expect(todayCell?.workout).toBeUndefined();
+
+    // Tomorrow or later should have projected workouts
+    const projectedCells = result.weeks.flatMap(w => w.cells).filter(c => c.type === 'projected');
+    expect(projectedCells.length).toBeGreaterThan(0);
+    expect(projectedCells.every(c => c.date > '2026-02-10')).toBe(true);
+  });
+
+  it('past rest day shows as explicit-rest, not past-missed', () => {
+    const progress = makeProgress({ restDays: ['2026-02-05'] });
+    const result = buildCalendarProjection(progress, now);
+
+    const restCell = result.weeks.flatMap(w => w.cells).find(c => c.date === '2026-02-05');
+    expect(restCell?.type).toBe('explicit-rest');
+  });
+
+  it('rest day + completed log same date: log wins (past-completed)', () => {
+    const progress = makeProgress({
+      restDays: ['2026-02-05'],
+      workoutLogs: [
+        makeLog({ id: '1', date: '2026-02-05', dayNumber: 1, cycle: 1 }),
+      ],
+    });
+    const result = buildCalendarProjection(progress, now);
+
+    const cell = result.weeks.flatMap(w => w.cells).find(c => c.date === '2026-02-05');
+    expect(cell?.type).toBe('past-completed');
   });
 });

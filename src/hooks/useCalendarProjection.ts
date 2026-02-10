@@ -5,6 +5,6 @@ import { buildCalendarProjection, CalendarProjection } from '../services/calenda
 export function useCalendarProjection(progress: UserProgress): CalendarProjection {
   return useMemo(
     () => buildCalendarProjection(progress),
-    [progress.workoutLogs, progress.currentCycle, progress.isDeloadWeek, progress.lastDeloadDate, progress.deloadIntervalWeeks],
+    [progress.workoutLogs, progress.currentCycle, progress.isDeloadWeek, progress.lastDeloadDate, progress.deloadIntervalWeeks, progress.restDays],
   );
 }

@@ -65,6 +65,7 @@ export function CalendarTimeline({ projection, onDayTap }: CalendarTimelineProps
         <LegendItem color="bg-blood-900/30 border-blood-800" label="Completed" />
         <LegendItem color="border-sanctum-700 border-dashed" label="Projected" />
         <LegendItem color="bg-metal-gold/10 border-metal-gold/30" label="Deload" />
+        <LegendItem color="bg-sanctum-800/30 border-sanctum-700" label="Rest Day" />
         <LegendItem color="border-blood-500 ring-1 ring-blood-500/50" label="Today" />
       </div>
 

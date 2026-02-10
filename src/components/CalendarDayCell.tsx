@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, Moon } from 'lucide-react';
 import { CalendarCell, DAY_ABBREVS } from '../services/calendarProjection';
 
 interface CalendarDayCellProps {
@@ -8,7 +8,10 @@ interface CalendarDayCellProps {
 
 export function CalendarDayCell({ cell, onTap }: CalendarDayCellProps) {
   const dayNum = parseInt(cell.date.split('-')[2], 10);
-  const isInteractive = cell.type === 'past-completed' || (cell.type === 'today' && !!cell.workout);
+  const isInteractive =
+    cell.type === 'past-completed' ||
+    (cell.type === 'today' && !!cell.workout) ||
+    (cell.type === 'explicit-rest' && cell.isToday);
   const isDeloadCompleted = cell.type === 'past-completed' && cell.workout?.isDeload;
 
   let cellClass: string;
@@ -26,6 +29,9 @@ export function CalendarDayCell({ cell, onTap }: CalendarDayCellProps) {
       break;
     case 'deload':
       cellClass = 'bg-metal-gold/5 border-metal-gold/20 border-dashed';
+      break;
+    case 'explicit-rest':
+      cellClass = 'bg-sanctum-800/30 border-sanctum-700';
       break;
     default: // rest, past-missed
       cellClass = 'border-transparent';
@@ -66,6 +72,10 @@ export function CalendarDayCell({ cell, onTap }: CalendarDayCellProps) {
         <span className="text-[8px] text-blood-400 leading-none mt-0.5">
           {DAY_ABBREVS[cell.workout.dayNumber]}
         </span>
+      )}
+
+      {cell.type === 'explicit-rest' && (
+        <Moon size={10} className="text-sanctum-500 mt-0.5" />
       )}
     </button>
   );
