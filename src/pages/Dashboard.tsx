@@ -29,7 +29,7 @@ export function Dashboard() {
       <div className="max-w-lg mx-auto px-4 pt-6">
         {/* Header */}
         <div className="flex items-baseline justify-between mb-1">
-          <h1 className="text-2xl font-display font-bold text-sanctum-50 tracking-tight">
+          <h1 className="text-2xl font-gothic text-blood-500">
             Sanctum
           </h1>
           <span className="text-metal-silver text-sm font-medium">

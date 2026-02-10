@@ -63,7 +63,7 @@ export function TutorialSheet({ onClose }: TutorialSheetProps) {
       <div className="relative w-full bg-sanctum-900 border-t border-sanctum-700 rounded-t-2xl animate-slide-up-sheet max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h2 className="text-lg font-semibold text-sanctum-50">
+          <h2 className="text-lg font-gothic text-blood-500">
             How to use Sanctum
           </h2>
           <button

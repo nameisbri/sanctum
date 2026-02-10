@@ -41,6 +41,7 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
+        gothic: ['UnifrakturMaguntia', 'cursive'],
       },
       animation: {
         'slide-up': 'slideUp 0.3s ease-out',

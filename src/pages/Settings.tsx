@@ -62,7 +62,7 @@ export function Settings() {
   return (
     <div className="min-h-screen bg-sanctum-950 pb-24">
       <div className="max-w-lg mx-auto px-4 pt-6">
-        <h1 className="text-2xl font-display font-bold text-sanctum-50 tracking-tight mb-6">
+        <h1 className="text-2xl font-gothic text-blood-500 mb-6">
           Settings
         </h1>
 

@@ -46,7 +46,7 @@ export function History() {
     <div className="px-4 py-6 pb-24 max-w-lg mx-auto min-h-screen">
       {/* Header */}
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-sanctum-100">History</h1>
+        <h1 className="text-2xl font-gothic text-blood-500">History</h1>
       </header>
 
       {/* Volume stats */}

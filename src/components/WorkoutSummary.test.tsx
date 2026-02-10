@@ -78,7 +78,7 @@ describe('WorkoutSummary', () => {
     renderSummary();
 
     const foundLine = closingLines.some((line) =>
-      screen.queryByText(`"${line}"`)
+      screen.queryByText(line)
     );
 
     expect(foundLine).toBe(true);

@@ -57,9 +57,19 @@ export function WorkoutSummary({
   return (
     <div className="fixed inset-0 z-50 bg-sanctum-950 flex flex-col items-center justify-center px-6 animate-fade-in">
       <div className="max-w-sm w-full text-center">
+        {/* Logo + app name */}
+        <div className="mb-6">
+          <img
+            src="/icon-192x192.png"
+            alt="Sanctum logo"
+            className="w-16 h-16 mx-auto mb-2"
+          />
+          <h1 className="font-gothic text-2xl text-blood-500">Sanctum</h1>
+        </div>
+
         {/* Closing line */}
         <p className="text-sanctum-300 text-lg font-medium italic mb-8 leading-relaxed">
-          "{closingLine}"
+          {closingLine}
         </p>
 
         {/* Stats */}

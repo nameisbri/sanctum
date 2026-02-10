@@ -43,7 +43,7 @@ export function Plan() {
       <div className="max-w-lg mx-auto px-4 pt-6">
         {/* Header */}
         <div className="flex items-baseline justify-between mb-6">
-          <h1 className="text-2xl font-display font-bold text-sanctum-50 tracking-tight">
+          <h1 className="text-2xl font-gothic text-blood-500">
             Plan
           </h1>
           <div className="flex items-center gap-3">
