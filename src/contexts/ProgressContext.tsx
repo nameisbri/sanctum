@@ -9,13 +9,14 @@ const DEFAULT_PROGRESS: UserProgress = {
   currentCycle: 1,
   cycleStartDate: new Date().toISOString().split('T')[0],
   deloadIntervalWeeks: 5,
+  isDeloadWeek: false,
   workoutLogs: [],
 };
 
 function loadProgress(): UserProgress {
   try {
     const item = localStorage.getItem(STORAGE_KEY);
-    return item ? JSON.parse(item) : DEFAULT_PROGRESS;
+    return item ? { ...DEFAULT_PROGRESS, ...JSON.parse(item) } : DEFAULT_PROGRESS;
   } catch {
     return DEFAULT_PROGRESS;
   }
@@ -39,6 +40,10 @@ interface ProgressContextType {
   calculateVolume: (exercises: ExerciseLog[]) => number;
   shouldSuggestDeload: () => boolean;
   recordDeload: () => void;
+  startDeload: () => void;
+  endDeload: () => void;
+  getLogsForCycle: (cycle: number) => WorkoutLog[];
+  getCycleNumbers: () => number[];
   exportData: () => void;
   importData: (jsonData: string) => boolean;
   resetProgress: () => void;
@@ -107,6 +112,33 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const startDeload = useCallback(() => {
+    setProgress(prev => ({
+      ...prev,
+      isDeloadWeek: true,
+    }));
+  }, []);
+
+  const endDeload = useCallback(() => {
+    setProgress(prev => ({
+      ...prev,
+      isDeloadWeek: false,
+      lastDeloadDate: new Date().toISOString().split('T')[0],
+    }));
+  }, []);
+
+  const getLogsForCycle = useCallback((cycle: number): WorkoutLog[] => {
+    return progress.workoutLogs
+      .filter(log => log.cycle === cycle)
+      .sort((a, b) => a.dayNumber - b.dayNumber);
+  }, [progress.workoutLogs]);
+
+  const getCycleNumbers = useCallback((): number[] => {
+    const cycles = new Set(progress.workoutLogs.map(log => log.cycle));
+    cycles.add(progress.currentCycle);
+    return Array.from(cycles).sort((a, b) => b - a);
+  }, [progress.workoutLogs, progress.currentCycle]);
+
   const exportData = useCallback(() => {
     const dataStr = JSON.stringify(progress, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -131,7 +163,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       ) {
         return false;
       }
-      setProgress(parsed);
+      setProgress({ ...DEFAULT_PROGRESS, ...parsed });
       return true;
     } catch {
       return false;
@@ -154,6 +186,10 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       calculateVolume,
       shouldSuggestDeload,
       recordDeload,
+      startDeload,
+      endDeload,
+      getLogsForCycle,
+      getCycleNumbers,
       exportData,
       importData,
       resetProgress,

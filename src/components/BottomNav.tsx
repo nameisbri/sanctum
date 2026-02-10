@@ -1,8 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Clock, Settings } from 'lucide-react';
+import { Home, CalendarDays, Clock, Settings } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'Home', icon: Home, matchExact: true },
+  { to: '/plan', label: 'Plan', icon: CalendarDays, matchExact: true },
   { to: '/history', label: 'History', icon: Clock, matchExact: false },
   { to: '/settings', label: 'Settings', icon: Settings, matchExact: true },
 ] as const;
