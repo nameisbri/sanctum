@@ -60,11 +60,11 @@ export function WorkoutSummary({
         {/* Logo + app name */}
         <div className="mb-6">
           <img
-            src="/icon-192x192.png"
+            src="/sanctum-logomark.png"
             alt="Sanctum logo"
-            className="w-16 h-16 mx-auto mb-2"
+            className="w-24 h-24 mx-auto mb-2"
           />
-          <h1 className="font-gothic text-2xl text-blood-500">sanctum</h1>
+          <h1 className="font-gothic text-3xl text-blood-500">sanctum</h1>
         </div>
 
         {/* Closing line */}
