@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Pause, Play, RotateCcw } from 'lucide-react';
 import { useProgress } from '../contexts/ProgressContext';
-import { getExercisesForDay, getWorkoutDay } from '../data/program';
-import { ExerciseLog, SetLog, WorkoutLog } from '../types';
+import { getExercisesForDay, getWorkoutDay, getRestTimerSeconds } from '../data/program';
+import { ExerciseLog, SetLog, WorkoutLog, RestTimerState } from '../types';
 import { ExerciseCard } from '../components/ExerciseCard';
 import { WorkoutSummary } from '../components/WorkoutSummary';
 import {
@@ -14,6 +14,7 @@ import {
 import { validateWorkoutCompletion } from '../services/workoutValidator';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
 import { useSessionTimer } from '../hooks/useSessionTimer';
+import { useRestTimer } from '../hooks/useRestTimer';
 
 export function Workout() {
   const { dayNumber } = useParams<{ dayNumber: string }>();
@@ -51,6 +52,22 @@ export function Workout() {
       notes: '',
     }));
   });
+
+  // Rest timer state — initialized from saved ActiveWorkout
+  const [restTimer, setRestTimer] = useState<RestTimerState | null>(() => {
+    const savedWorkout = getActiveWorkout(dayNum);
+    return savedWorkout?.restTimer ?? null;
+  });
+
+  const handleRestComplete = useCallback(() => {
+    setRestTimer(null);
+  }, []);
+
+  const restTimerInfo = useRestTimer(restTimer, handleRestComplete);
+
+  const handleRestDismiss = useCallback(() => {
+    setRestTimer(null);
+  }, []);
 
   const [expandedExercise, setExpandedExercise] = useState<number>(() => {
     const firstIncomplete = exerciseLogs.findIndex(
@@ -98,8 +115,9 @@ export function Workout() {
       cycle: currentCycle,
       exercises: exerciseLogs,
       startTime,
+      restTimer,
     });
-  }, [exerciseLogs, dayNum, currentCycle, startTime]);
+  }, [exerciseLogs, dayNum, currentCycle, startTime, restTimer]);
 
   // Completion progress
   const completionProgress = useMemo(() => {
@@ -124,6 +142,7 @@ export function Workout() {
       cycle: currentCycle,
       exercises: logs,
       startTime,
+      restTimer,
     });
   };
 
@@ -155,10 +174,12 @@ export function Workout() {
   };
 
   const handleSetToggle = (exerciseIndex: number, setIndex: number) => {
-    setExerciseLogs((prev) => {
-      const currentSet = prev[exerciseIndex]?.sets[setIndex];
-      if (!currentSet) return prev;
+    const currentSet = exerciseLogs[exerciseIndex]?.sets[setIndex];
+    if (!currentSet) return;
 
+    const willComplete = !currentSet.completed;
+
+    setExerciseLogs((prev) => {
       const newLogs = [...prev];
       newLogs[exerciseIndex] = {
         ...newLogs[exerciseIndex],
@@ -166,8 +187,8 @@ export function Workout() {
           i === setIndex
             ? {
                 ...set,
-                completed: !currentSet.completed,
-                timestamp: !currentSet.completed ? Date.now() : undefined,
+                completed: willComplete,
+                timestamp: willComplete ? Date.now() : undefined,
               }
             : set
         ),
@@ -175,6 +196,22 @@ export function Workout() {
       saveWorkoutState(newLogs);
       return newLogs;
     });
+
+    if (willComplete) {
+      const exercise = exercises[exerciseIndex];
+      const duration = exercise ? getRestTimerSeconds(exercise.category) : 90;
+      setRestTimer({
+        exerciseIndex,
+        setIndex,
+        startedAt: Date.now(),
+        duration,
+      });
+    } else {
+      // Un-completing a set — clear rest timer if it belongs to this set
+      if (restTimer?.exerciseIndex === exerciseIndex && restTimer?.setIndex === setIndex) {
+        setRestTimer(null);
+      }
+    }
   };
 
   const handleSkipExercise = (exerciseIndex: number, skipped: boolean) => {
@@ -382,6 +419,12 @@ export function Workout() {
               onReplaceExercise={handleReplaceExercise}
               lastExerciseData={lastExerciseData}
               previousWorkout={lastWorkout}
+              restTimer={
+                restTimerInfo.isRunning && restTimerInfo.exerciseIndex === exerciseIndex
+                  ? { exerciseIndex: restTimerInfo.exerciseIndex, setIndex: restTimerInfo.setIndex, remaining: restTimerInfo.remaining, display: restTimerInfo.display }
+                  : null
+              }
+              onRestDismiss={handleRestDismiss}
             />
           );
         })}

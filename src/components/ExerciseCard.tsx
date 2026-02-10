@@ -1,10 +1,16 @@
-import { useState, useEffect, memo } from 'react';
+import { useState, memo } from 'react';
 import { ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { Exercise, ExerciseLog, SetLog, WorkoutLog } from '../types';
-import { getRestTimerSeconds } from '../data/program';
 import { useUnits, convertWeight } from '../hooks/useUnits';
 import { isSetPR } from '../services/prDetector';
 import { CATEGORY_BADGE_COLORS } from '../constants/categoryColors';
+
+interface RestTimerDisplay {
+  exerciseIndex: number;
+  setIndex: number;
+  remaining: number;
+  display: string;
+}
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -19,6 +25,8 @@ interface ExerciseCardProps {
   onReplaceExercise: (exerciseIndex: number, replacementName: string) => void;
   lastExerciseData: ExerciseLog | null;
   previousWorkout: WorkoutLog | null;
+  restTimer: RestTimerDisplay | null;
+  onRestDismiss: () => void;
 }
 
 export const ExerciseCard = memo(function ExerciseCard({
@@ -34,13 +42,13 @@ export const ExerciseCard = memo(function ExerciseCard({
   onReplaceExercise,
   lastExerciseData,
   previousWorkout,
+  restTimer,
+  onRestDismiss,
 }: ExerciseCardProps) {
   const { unit } = useUnits();
   const [showNotes, setShowNotes] = useState(!!exerciseLog.notes);
   const [showReplace, setShowReplace] = useState(false);
   const [replaceName, setReplaceName] = useState('');
-  // Track which set has an active rest timer (-1 = none)
-  const [restingSetIndex, setRestingSetIndex] = useState(-1);
   const completedSets = exerciseLog.sets.filter(s => s.completed).length;
   const allComplete = completedSets === exercise.sets;
   const isSkipped = exerciseLog.skipped || false;
@@ -151,10 +159,8 @@ export const ExerciseCard = memo(function ExerciseCard({
                 previousWorkout={previousWorkout}
                 onUpdateSet={onUpdateSet}
                 onSetComplete={onSetComplete}
-                isResting={restingSetIndex === setIndex}
-                onRestStart={() => setRestingSetIndex(setIndex)}
-                onRestEnd={() => setRestingSetIndex(-1)}
-                onInputFocus={() => { if (restingSetIndex !== setIndex) setRestingSetIndex(-1); }}
+                restDisplay={restTimer?.setIndex === setIndex ? restTimer.display : null}
+                onRestDismiss={onRestDismiss}
               />
             ))}
           </div>
@@ -239,10 +245,8 @@ interface SetRowProps {
   previousWorkout: WorkoutLog | null;
   onUpdateSet: (exerciseIndex: number, setIndex: number, updates: Partial<SetLog>) => void;
   onSetComplete: (exerciseIndex: number, setIndex: number) => void;
-  isResting: boolean;
-  onRestStart: () => void;
-  onRestEnd: () => void;
-  onInputFocus: () => void;
+  restDisplay: string | null;
+  onRestDismiss: () => void;
 }
 
 function SetRow({
@@ -255,58 +259,11 @@ function SetRow({
   previousWorkout,
   onUpdateSet,
   onSetComplete,
-  isResting,
-  onRestStart,
-  onRestEnd,
-  onInputFocus,
+  restDisplay,
+  onRestDismiss,
 }: SetRowProps) {
   const { unit } = useUnits();
-  const restDuration = getRestTimerSeconds(exercise.category);
-  const [restRemaining, setRestRemaining] = useState(0);
   const isPR = isSetPR(set, exerciseName, previousWorkout);
-
-  // Start rest timer when set is newly completed
-  const wasCompleted = usePrevious(set.completed);
-
-  useEffect(() => {
-    if (set.completed && !wasCompleted) {
-      setRestRemaining(restDuration);
-      onRestStart();
-    }
-  }, [set.completed, wasCompleted, restDuration, onRestStart]);
-
-  // Kill timer when parent says we're no longer resting
-  useEffect(() => {
-    if (!isResting && restRemaining > 0) {
-      setRestRemaining(0);
-    }
-  }, [isResting, restRemaining]);
-
-  // Countdown
-  useEffect(() => {
-    if (!isResting || restRemaining <= 0) {
-      if (restRemaining <= 0 && isResting) onRestEnd();
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setRestRemaining(prev => {
-        if (prev <= 1) {
-          onRestEnd();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isResting, restRemaining, onRestEnd]);
-
-  const formatRest = (secs: number) => {
-    const m = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${m}:${String(s).padStart(2, '0')}`;
-  };
 
   return (
     <div>
@@ -329,7 +286,6 @@ function SetRow({
           onChange={(e) => onUpdateSet(exerciseIndex, setIndex, {
             weight: e.target.value ? parseFloat(e.target.value) : null,
           })}
-          onFocus={onInputFocus}
           placeholder={lastSetData?.weight ? `${convertWeight(lastSetData.weight, unit)}` : unit}
           aria-label={`Set ${set.setNumber} weight in ${unit}`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
@@ -345,7 +301,6 @@ function SetRow({
           onChange={(e) => onUpdateSet(exerciseIndex, setIndex, {
             reps: e.target.value ? parseInt(e.target.value, 10) : null,
           })}
-          onFocus={onInputFocus}
           placeholder={lastSetData?.reps ? `${lastSetData.reps}` : exercise.reps.split('-')[0]}
           aria-label={`Set ${set.setNumber} reps`}
           className="flex-1 bg-sanctum-800 border border-sanctum-700 rounded-lg px-3 py-2.5 text-center text-sanctum-100 font-mono text-sm placeholder:text-sanctum-600 focus:outline-none focus:border-blood-500/50 transition-colors min-w-0"
@@ -374,27 +329,15 @@ function SetRow({
       </div>
 
       {/* Rest timer */}
-      {isResting && restRemaining > 0 && (
+      {restDisplay && (
         <button
-          onClick={onRestEnd}
+          onClick={onRestDismiss}
           className="mt-1 ml-10 text-xs text-sanctum-400 font-mono hover:text-sanctum-300 transition-colors min-h-[44px] py-2"
-          aria-label={`Skip rest timer, ${restRemaining} seconds remaining`}
+          aria-label="Skip rest timer"
         >
-          Rest: {formatRest(restRemaining)}
+          Rest: {restDisplay}
         </button>
       )}
     </div>
   );
-}
-
-// --- usePrevious helper ---
-
-function usePrevious<T>(value: T): T | undefined {
-  const [prev, setPrev] = useState<{ current: T | undefined }>({ current: undefined });
-
-  useEffect(() => {
-    setPrev({ current: value });
-  }, [value]);
-
-  return prev.current;
 }

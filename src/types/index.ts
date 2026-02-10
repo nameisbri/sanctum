@@ -72,11 +72,19 @@ export interface UserProgress {
 
 // UI State types
 
+export interface RestTimerState {
+  exerciseIndex: number;
+  setIndex: number;
+  startedAt: number;  // Date.now() epoch ms
+  duration: number;   // seconds
+}
+
 export interface ActiveWorkout {
   dayNumber: number;
   cycle: number;
   exercises: ExerciseLog[];
   startTime: number;
+  restTimer?: RestTimerState | null;
 }
 
 // Validation types

@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { RestTimerState } from '../types';
 
 function formatCountdown(seconds: number): string {
   const mins = Math.floor(seconds / 60);
@@ -6,45 +7,67 @@ function formatCountdown(seconds: number): string {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
-export function useRestTimer(durationSeconds: number, isActive: boolean) {
-  const [remaining, setRemaining] = useState(durationSeconds);
-  const [isRunning, setIsRunning] = useState(false);
+function computeRemaining(timerState: RestTimerState | null, now: number): number {
+  if (!timerState) return 0;
+  const elapsed = (now - timerState.startedAt) / 1000;
+  return Math.max(0, Math.ceil(timerState.duration - elapsed));
+}
 
-  useEffect(() => {
-    if (isActive) {
-      setRemaining(durationSeconds);
-      setIsRunning(true);
-    }
-  }, [isActive, durationSeconds]);
+export function useRestTimer(
+  timerState: RestTimerState | null,
+  onComplete: () => void
+) {
+  const [remaining, setRemaining] = useState(() =>
+    computeRemaining(timerState, Date.now())
+  );
 
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+
+  const firedRef = useRef(false);
+
+  // Reset when a new timer starts (new startedAt) or timer is cleared
   useEffect(() => {
-    if (!isRunning || remaining <= 0) {
-      if (remaining <= 0) setIsRunning(false);
+    const now = Date.now();
+    const r = computeRemaining(timerState, now);
+    setRemaining(r);
+
+    if (!timerState) {
+      firedRef.current = false;
       return;
     }
 
+    // If already expired on mount, fire onComplete immediately
+    if (r <= 0) {
+      if (!firedRef.current) {
+        firedRef.current = true;
+        onCompleteRef.current();
+      }
+      return;
+    }
+
+    firedRef.current = false;
+
     const interval = setInterval(() => {
-      setRemaining(prev => {
-        if (prev <= 1) {
-          setIsRunning(false);
-          return 0;
+      const rem = computeRemaining(timerState, Date.now());
+      setRemaining(rem);
+      if (rem <= 0) {
+        clearInterval(interval);
+        if (!firedRef.current) {
+          firedRef.current = true;
+          onCompleteRef.current();
         }
-        return prev - 1;
-      });
-    }, 1000);
+      }
+    }, 250);
 
     return () => clearInterval(interval);
-  }, [isRunning, remaining]);
-
-  const dismiss = useCallback(() => {
-    setIsRunning(false);
-    setRemaining(0);
-  }, []);
+  }, [timerState?.startedAt, timerState?.duration]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     remaining,
     display: formatCountdown(remaining),
-    isRunning,
-    dismiss,
+    isRunning: timerState != null && remaining > 0,
+    exerciseIndex: timerState?.exerciseIndex ?? -1,
+    setIndex: timerState?.setIndex ?? -1,
   };
 }
