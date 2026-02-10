@@ -30,7 +30,7 @@ export function Dashboard() {
         {/* Header */}
         <div className="flex items-baseline justify-between mb-1">
           <h1 className="text-2xl font-gothic text-blood-500">
-            Sanctum
+            sanctum
           </h1>
           <span className="text-metal-silver text-sm font-medium">
             Cycle {progress.currentCycle}

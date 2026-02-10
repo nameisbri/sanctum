@@ -123,7 +123,7 @@ describe('Plan', () => {
 
   it('renders Plan heading', () => {
     renderPlan();
-    expect(screen.getByText('Plan')).toBeInTheDocument();
+    expect(screen.getByText('plan')).toBeInTheDocument();
   });
 
   it('renders cycle number', () => {

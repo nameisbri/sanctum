@@ -71,7 +71,7 @@ describe('App', () => {
   it('renders Dashboard on root route', async () => {
     renderApp('/');
     await waitFor(() => {
-      expect(screen.getByText('Sanctum')).toBeInTheDocument();
+      expect(screen.getByText('sanctum')).toBeInTheDocument();
     });
   });
 });

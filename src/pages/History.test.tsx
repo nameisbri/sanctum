@@ -78,7 +78,7 @@ describe('History', () => {
   it('renders the heading', () => {
     setupMock();
     renderHistory();
-    expect(screen.getByText('History')).toBeInTheDocument();
+    expect(screen.getByText('history')).toBeInTheDocument();
   });
 
   it('shows empty state when no completed workouts', () => {

@@ -64,7 +64,7 @@ export function TutorialSheet({ onClose }: TutorialSheetProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <h2 className="text-lg font-gothic text-blood-500">
-            How to use Sanctum
+            how to use sanctum
           </h2>
           <button
             onClick={onClose}

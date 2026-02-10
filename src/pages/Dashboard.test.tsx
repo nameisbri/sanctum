@@ -68,7 +68,7 @@ describe('Dashboard', () => {
 
   it('renders Sanctum heading', () => {
     renderDashboard();
-    expect(screen.getByText('Sanctum')).toBeInTheDocument();
+    expect(screen.getByText('sanctum')).toBeInTheDocument();
   });
 
   it('renders cycle number from context', () => {

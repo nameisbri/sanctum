@@ -64,7 +64,7 @@ export function WorkoutSummary({
             alt="Sanctum logo"
             className="w-16 h-16 mx-auto mb-2"
           />
-          <h1 className="font-gothic text-2xl text-blood-500">Sanctum</h1>
+          <h1 className="font-gothic text-2xl text-blood-500">sanctum</h1>
         </div>
 
         {/* Closing line */}

@@ -44,7 +44,7 @@ export function Plan() {
         {/* Header */}
         <div className="flex items-baseline justify-between mb-6">
           <h1 className="text-2xl font-gothic text-blood-500">
-            Plan
+            plan
           </h1>
           <div className="flex items-center gap-3">
             <span className="text-[11px] font-medium text-sanctum-500 bg-sanctum-900 px-2 py-0.5 rounded-full" data-testid="frequency-badge">
