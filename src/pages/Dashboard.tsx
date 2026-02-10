@@ -7,10 +7,8 @@ import { DayCard } from '../components/DayCard';
 import { WorkoutPreview } from '../components/WorkoutPreview';
 
 export function Dashboard() {
-  const { progress, getLastWorkoutForDay, shouldSuggestDeload, recordDeload } = useProgress();
+  const { progress, getLastWorkoutForDay } = useProgress();
   const [previewDay, setPreviewDay] = useState<number | null>(null);
-
-  const showDeload = shouldSuggestDeload();
 
   const totalSessions = progress.workoutLogs.filter(l => l.completed).length;
 
@@ -36,25 +34,13 @@ export function Dashboard() {
           </h1>
           <span className="text-metal-silver text-sm font-medium">
             Cycle {progress.currentCycle}
+            {progress.isDeloadWeek && (
+              <span className="text-metal-gold text-xs ml-2">Deload</span>
+            )}
           </span>
         </div>
 
-        {/* Deload suggestion */}
-        {showDeload && (
-          <div className="flex items-start justify-between mb-6">
-            <p className="text-sanctum-400 italic text-sm">
-              Consider a deload. The body rebuilds in rest.
-            </p>
-            <button
-              onClick={recordDeload}
-              className="text-xs text-sanctum-400 hover:text-sanctum-300 transition-colors ml-3 flex-shrink-0 py-0.5"
-            >
-              Not now
-            </button>
-          </div>
-        )}
-
-        {!showDeload && <div className="mb-6" />}
+        <div className="mb-6" />
 
         {/* Day Cards */}
         <div className="space-y-3 mb-8">

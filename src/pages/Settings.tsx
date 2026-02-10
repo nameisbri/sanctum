@@ -1,11 +1,13 @@
 import { useState, useRef } from 'react';
 import { useProgress } from '../contexts/ProgressContext';
 import { useUnits } from '../hooks/useUnits';
+import { TutorialSheet } from '../components/TutorialSheet';
 
 export function Settings() {
   const { progress, updateDeloadInterval, exportData, importData, resetProgress } = useProgress();
   const { unit, setUnit } = useUnits();
 
+  const [showTutorial, setShowTutorial] = useState(false);
   const [importConfirm, setImportConfirm] = useState(false);
   const [pendingImport, setPendingImport] = useState<string | null>(null);
   const [importError, setImportError] = useState(false);
@@ -63,6 +65,18 @@ export function Settings() {
         <h1 className="text-2xl font-display font-bold text-sanctum-50 tracking-tight mb-6">
           Settings
         </h1>
+
+        {/* How to use */}
+        <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
+          <button
+            onClick={() => setShowTutorial(true)}
+            className="w-full py-2.5 rounded-lg text-sm font-medium bg-sanctum-800 text-sanctum-200 border border-sanctum-700 hover:border-sanctum-500 transition-colors duration-200"
+          >
+            How to use Sanctum
+          </button>
+        </div>
+
+        <div className="border-t border-sanctum-700 my-4" />
 
         {/* Units */}
         <div className="bg-sanctum-900 border border-sanctum-700 rounded-xl p-4">
@@ -214,6 +228,8 @@ export function Settings() {
           )}
         </div>
       </div>
+
+      {showTutorial && <TutorialSheet onClose={() => setShowTutorial(false)} />}
     </div>
   );
 }

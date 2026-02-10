@@ -147,4 +147,129 @@ describe('ProgressContext', () => {
       expect(success).toBe(false);
     });
   });
+
+  it('defaults isDeloadWeek to false', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    expect(result.current.progress.isDeloadWeek).toBe(false);
+  });
+
+  it('startDeload sets isDeloadWeek to true', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.startDeload();
+    });
+    expect(result.current.progress.isDeloadWeek).toBe(true);
+  });
+
+  it('endDeload sets isDeloadWeek to false and updates lastDeloadDate', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.startDeload();
+    });
+    expect(result.current.progress.isDeloadWeek).toBe(true);
+    act(() => {
+      result.current.endDeload();
+    });
+    expect(result.current.progress.isDeloadWeek).toBe(false);
+    expect(result.current.progress.lastDeloadDate).toBeDefined();
+  });
+
+  it('getLogsForCycle returns logs filtered by cycle and sorted by dayNumber', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    const log2: WorkoutLog = { ...mockLog, id: 'test-c1d3', dayNumber: 3, dayName: 'Legs (A)', cycle: 1 };
+    const log3: WorkoutLog = { ...mockLog, id: 'test-c2d1', cycle: 2 };
+    act(() => {
+      result.current.addWorkoutLog(mockLog);
+      result.current.addWorkoutLog(log2);
+      result.current.addWorkoutLog(log3);
+    });
+    const cycle1Logs = result.current.getLogsForCycle(1);
+    expect(cycle1Logs).toHaveLength(2);
+    expect(cycle1Logs[0].dayNumber).toBe(1);
+    expect(cycle1Logs[1].dayNumber).toBe(3);
+  });
+
+  it('getCycleNumbers returns distinct cycles descending, always includes currentCycle', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    const log2: WorkoutLog = { ...mockLog, id: 'test-c2', cycle: 2 };
+    act(() => {
+      result.current.addWorkoutLog(mockLog);
+      result.current.addWorkoutLog(log2);
+    });
+    const cycles = result.current.getCycleNumbers();
+    expect(cycles[0]).toBeGreaterThanOrEqual(cycles[cycles.length - 1]);
+    expect(cycles).toContain(1);
+    expect(cycles).toContain(2);
+    expect(cycles).toContain(result.current.progress.currentCycle);
+  });
+
+  it('loadProgress handles missing isDeloadWeek from localStorage gracefully', () => {
+    const oldData = {
+      currentCycle: 2,
+      cycleStartDate: '2025-06-01',
+      deloadIntervalWeeks: 4,
+      workoutLogs: [],
+    };
+    localStorage.setItem('sanctum-progress', JSON.stringify(oldData));
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    expect(result.current.progress.isDeloadWeek).toBe(false);
+    expect(result.current.progress.currentCycle).toBe(2);
+  });
+
+  it('importData handles missing isDeloadWeek gracefully', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    const importPayload = JSON.stringify({
+      currentCycle: 3,
+      cycleStartDate: '2025-01-01',
+      deloadIntervalWeeks: 4,
+      workoutLogs: [],
+    });
+    act(() => {
+      const success = result.current.importData(importPayload);
+      expect(success).toBe(true);
+    });
+    expect(result.current.progress.isDeloadWeek).toBe(false);
+  });
+
+  it('addRestDay appends date to restDays', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-10']);
+  });
+
+  it('addRestDay does not duplicate existing date', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+      result.current.addRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-10']);
+  });
+
+  it('removeRestDay filters date from restDays', () => {
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    act(() => {
+      result.current.addRestDay('2026-02-10');
+      result.current.addRestDay('2026-02-11');
+    });
+    expect(result.current.progress.restDays).toHaveLength(2);
+    act(() => {
+      result.current.removeRestDay('2026-02-10');
+    });
+    expect(result.current.progress.restDays).toEqual(['2026-02-11']);
+  });
+
+  it('loadProgress handles missing restDays from localStorage gracefully', () => {
+    const oldData = {
+      currentCycle: 2,
+      cycleStartDate: '2025-06-01',
+      deloadIntervalWeeks: 4,
+      workoutLogs: [],
+    };
+    localStorage.setItem('sanctum-progress', JSON.stringify(oldData));
+    const { result } = renderHook(() => useProgress(), { wrapper });
+    expect(result.current.progress.restDays).toEqual([]);
+  });
 });

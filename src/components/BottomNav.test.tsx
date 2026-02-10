@@ -18,10 +18,10 @@ describe('BottomNav', () => {
     expect(nav).toBeInTheDocument();
   });
 
-  it('renders 3 navigation links', () => {
+  it('renders 4 navigation links', () => {
     renderWithRouter('/');
     const links = screen.getAllByRole('link');
-    expect(links).toHaveLength(3);
+    expect(links).toHaveLength(4);
   });
 
   it('marks Home link as active when on "/"', () => {
@@ -45,13 +45,22 @@ describe('BottomNav', () => {
     expect(settingsLink).toHaveAttribute('aria-current', 'page');
   });
 
+  it('marks Plan link as active when on "/plan"', () => {
+    renderWithRouter('/plan');
+    const planLink = screen.getByLabelText('Plan');
+    expect(planLink).toHaveClass('text-blood-500');
+    expect(planLink).toHaveAttribute('aria-current', 'page');
+  });
+
   it('only marks one link as active at a time', () => {
     renderWithRouter('/');
     const homeLink = screen.getByLabelText('Home');
+    const planLink = screen.getByLabelText('Plan');
     const historyLink = screen.getByLabelText('History');
     const settingsLink = screen.getByLabelText('Settings');
 
     expect(homeLink).toHaveClass('text-blood-500');
+    expect(planLink).not.toHaveClass('text-blood-500');
     expect(historyLink).not.toHaveClass('text-blood-500');
     expect(settingsLink).not.toHaveClass('text-blood-500');
   });
@@ -59,6 +68,7 @@ describe('BottomNav', () => {
   it('all links point to correct hrefs', () => {
     renderWithRouter('/');
     expect(screen.getByLabelText('Home')).toHaveAttribute('href', '/');
+    expect(screen.getByLabelText('Plan')).toHaveAttribute('href', '/plan');
     expect(screen.getByLabelText('History')).toHaveAttribute('href', '/history');
     expect(screen.getByLabelText('Settings')).toHaveAttribute('href', '/settings');
   });

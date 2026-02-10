@@ -29,6 +29,7 @@ function createMockProgress(overrides: Record<string, unknown> = {}) {
       currentCycle: 1,
       cycleStartDate: '2026-01-01',
       deloadIntervalWeeks: 5,
+      isDeloadWeek: false,
       workoutLogs: [],
       ...overrides,
     },
@@ -39,6 +40,10 @@ function createMockProgress(overrides: Record<string, unknown> = {}) {
     updateCycle: vi.fn(),
     addWorkoutLog: vi.fn(),
     recordDeload: vi.fn(),
+    startDeload: vi.fn(),
+    endDeload: vi.fn(),
+    getLogsForCycle: vi.fn().mockReturnValue([]),
+    getCycleNumbers: vi.fn().mockReturnValue([1]),
     exportData: vi.fn(),
     importData: vi.fn(),
     resetProgress: vi.fn(),
@@ -71,16 +76,14 @@ describe('Dashboard', () => {
     expect(screen.getByText('Cycle 3')).toBeInTheDocument();
   });
 
-  it('shows deload banner when shouldSuggestDeload returns true', () => {
-    const mock = createMockProgress();
-    mock.shouldSuggestDeload.mockReturnValue(true);
-    renderDashboard({}, mock);
-    expect(screen.getByText('Consider a deload. The body rebuilds in rest.')).toBeInTheDocument();
+  it('shows deload badge when isDeloadWeek is true', () => {
+    renderDashboard({ isDeloadWeek: true });
+    expect(screen.getByText('Deload')).toBeInTheDocument();
   });
 
-  it('hides deload banner when shouldSuggestDeload returns false', () => {
-    renderDashboard();
-    expect(screen.queryByText('Consider a deload. The body rebuilds in rest.')).not.toBeInTheDocument();
+  it('hides deload badge when isDeloadWeek is false', () => {
+    renderDashboard({ isDeloadWeek: false });
+    expect(screen.queryByText('Deload')).not.toBeInTheDocument();
   });
 
   it('renders 6 day cards', () => {

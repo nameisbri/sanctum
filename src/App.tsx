@@ -6,6 +6,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { useOnlineStatus } from './hooks/useOnlineStatus';
 
 const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const Plan = lazy(() => import('./pages/Plan').then(m => ({ default: m.Plan })));
 const Workout = lazy(() => import('./pages/Workout').then(m => ({ default: m.Workout })));
 const History = lazy(() => import('./pages/History').then(m => ({ default: m.History })));
 const Settings = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
@@ -47,6 +48,7 @@ function AppLayout() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/plan" element={<Plan />} />
               <Route path="/workout/:dayNumber" element={<Workout />} />
               <Route path="/history" element={<History />} />
               <Route path="/settings" element={<Settings />} />

@@ -57,6 +57,7 @@ export interface WorkoutLog {
   totalVolume?: number;
   duration?: number;
   sessionNotes?: string;
+  isDeload?: boolean;
 }
 
 export interface UserProgress {
@@ -64,7 +65,9 @@ export interface UserProgress {
   cycleStartDate: string;
   deloadIntervalWeeks: number;
   lastDeloadDate?: string;
+  isDeloadWeek: boolean;
   workoutLogs: WorkoutLog[];
+  restDays: string[];
 }
 
 // UI State types

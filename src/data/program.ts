@@ -53,24 +53,9 @@ export const sanctumProgram: Program = {
         { order: 10, name: 'Roman Chair Leg Raises', category: 'abs', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
       ],
     },
-    // Day 4: Push
+    // Day 4: Pull
     {
       dayNumber: 4,
-      name: 'Push',
-      exercises: [
-        { order: 1, name: 'Pec Deck', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
-        { order: 2, name: 'Incline Machine Press (Power Smith)', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
-        { order: 3, name: 'Decline Bench Press', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
-        { order: 4, name: 'Vertical Pec Fly', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
-        { order: 5, name: 'Behind The Neck Press', category: 'shoulders', sets: 2, reps: '6-12', rest: '2 min', notes: '' },
-        { order: 6, name: 'Hip High Cable Raises', category: 'shoulders', sets: 2, reps: '6-12', rest: '2 min', notes: '' },
-        { order: 7, name: 'Lean Forward Dips', category: 'triceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
-        { order: 8, name: 'Overhead Tricep Extensions', category: 'triceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
-      ],
-    },
-    // Day 5: Pull
-    {
-      dayNumber: 5,
       name: 'Pull',
       exercises: [
         { order: 1, name: 'ISO High Row', category: 'back', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
@@ -81,6 +66,21 @@ export const sanctumProgram: Program = {
         { order: 6, name: 'Hyperextensions', category: 'back', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
         { order: 7, name: 'Dual Handle Rope Bicep Curls', category: 'biceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
         { order: 8, name: 'Bayesian Curls', category: 'biceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
+      ],
+    },
+    // Day 5: Push
+    {
+      dayNumber: 5,
+      name: 'Push',
+      exercises: [
+        { order: 1, name: 'Pec Deck', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
+        { order: 2, name: 'Incline Machine Press (Power Smith)', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
+        { order: 3, name: 'Decline Bench Press', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
+        { order: 4, name: 'Vertical Pec Fly', category: 'chest', sets: 2, reps: '6-12', rest: '3 min', notes: '' },
+        { order: 5, name: 'Behind The Neck Press', category: 'shoulders', sets: 2, reps: '6-12', rest: '2 min', notes: '' },
+        { order: 6, name: 'Hip High Cable Raises', category: 'shoulders', sets: 2, reps: '6-12', rest: '2 min', notes: '' },
+        { order: 7, name: 'Lean Forward Dips', category: 'triceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
+        { order: 8, name: 'Overhead Tricep Extensions', category: 'triceps', sets: 2, reps: '6-12', rest: '90 sec', notes: '' },
       ],
     },
     // Day 6: Legs (B)

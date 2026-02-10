@@ -237,6 +237,7 @@ export function Workout() {
       totalVolume,
       duration: elapsedSeconds,
       sessionNotes: sessionNotes.trim() || undefined,
+      ...(progress.isDeloadWeek && { isDeload: true }),
     };
     addWorkoutLog(workoutLog);
     clearActiveWorkout(dayNum);
@@ -314,6 +315,13 @@ export function Workout() {
               </span>
             </div>
           </div>
+
+          {/* Deload guidance */}
+          {progress.isDeloadWeek && (
+            <p className="text-xs text-metal-gold mb-2">
+              Deload week — lighter weights, focus on form &amp; recovery.
+            </p>
+          )}
 
           {/* Progress bar */}
           <div className="h-1 bg-sanctum-800 rounded-full overflow-hidden">

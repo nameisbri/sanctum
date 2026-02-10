@@ -20,8 +20,8 @@ describe('sanctumProgram', () => {
       'Chest/Back',
       'Shoulders/Arms',
       'Legs (A)',
-      'Push',
       'Pull',
+      'Push',
       'Legs (B)',
     ]);
   });
