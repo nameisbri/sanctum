@@ -269,7 +269,7 @@ describe('buildCalendarProjection', () => {
 
     expect(result.nextWorkout).toBeDefined();
     expect(result.nextWorkout!.dayNumber).toBe(1);
-    expect(result.nextWorkout!.dayName).toBe('Chest/Back');
+    expect(result.nextWorkout!.dayName).toBe('Pull');
   });
 
   it('handles currently in deload week', () => {

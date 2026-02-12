@@ -17,18 +17,18 @@ describe('sanctumProgram', () => {
   it('has correct day names', () => {
     const names = sanctumProgram.workoutDays.map(d => d.name);
     expect(names).toEqual([
-      'Chest/Back',
-      'Shoulders/Arms',
-      'Legs (A)',
       'Pull',
       'Push',
+      'Legs (A)',
+      'Chest/Back',
+      'Shoulders/Arms',
       'Legs (B)',
     ]);
   });
 
   it('has correct exercise counts per day', () => {
     const counts = sanctumProgram.workoutDays.map(d => d.exercises.length);
-    expect(counts).toEqual([8, 9, 10, 8, 8, 9]);
+    expect(counts).toEqual([8, 8, 10, 8, 9, 9]);
   });
 
   it('has 52 total exercises across all days', () => {
@@ -60,16 +60,16 @@ describe('sanctumProgram', () => {
       });
     });
     expect(perSideExercises).toEqual([
+      'Bulgarian Split Squats',
       'Single Arm Cable Row',
       'Single Arm Overhead Extensions',
-      'Bulgarian Split Squats',
       'Step-Ups',
     ]);
   });
 
   it('21s Ez Bar Bicep Curl has special notes', () => {
-    const day2 = sanctumProgram.workoutDays.find(d => d.dayNumber === 2)!;
-    const curl = day2.exercises.find(e => e.name === '21s Ez Bar Bicep Curl')!;
+    const day5 = sanctumProgram.workoutDays.find(d => d.dayNumber === 5)!;
+    const curl = day5.exercises.find(e => e.name === '21s Ez Bar Bicep Curl')!;
     expect(curl.notes).toBe('7 bottom half + 7 top half + 7 full ROM');
   });
 });
@@ -78,7 +78,7 @@ describe('getExercisesForDay', () => {
   it('returns exercises for a valid day', () => {
     const exercises = getExercisesForDay(1);
     expect(exercises).toHaveLength(8);
-    expect(exercises[0].name).toBe('Incline Barbell Press');
+    expect(exercises[0].name).toBe('ISO High Row');
   });
 
   it('returns empty array for invalid day', () => {

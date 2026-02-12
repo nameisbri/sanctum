@@ -28,7 +28,7 @@ const mockUseCalendarProjection = useCalendarProjection as ReturnType<typeof vi.
 function makeProjection(overrides: Partial<CalendarProjection> = {}): CalendarProjection {
   return {
     frequency: { workoutsPerWeek: 5, avgDaysBetweenWorkouts: 1.4, confidence: 'default' },
-    nextWorkout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 },
+    nextWorkout: { dayNumber: 1, dayName: 'Pull', cycle: 1 },
     weeks: [
       {
         weekLabel: 'Jan 26 – Feb 1',
@@ -49,11 +49,11 @@ function makeProjection(overrides: Partial<CalendarProjection> = {}): CalendarPr
         isDeloadWeek: false,
         cells: [
           { date: '2026-02-09', dayOfWeek: 0, isToday: false, type: 'past-missed' as const },
-          { date: '2026-02-10', dayOfWeek: 1, isToday: true, type: 'today' as const, workout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 } },
-          { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 2, dayName: 'Shoulders/Arms', cycle: 1 } },
+          { date: '2026-02-10', dayOfWeek: 1, isToday: true, type: 'today' as const, workout: { dayNumber: 1, dayName: 'Pull', cycle: 1 } },
+          { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 2, dayName: 'Push', cycle: 1 } },
           { date: '2026-02-12', dayOfWeek: 3, isToday: false, type: 'projected' as const, workout: { dayNumber: 3, dayName: 'Legs (A)', cycle: 1 } },
           { date: '2026-02-13', dayOfWeek: 4, isToday: false, type: 'rest' as const },
-          { date: '2026-02-14', dayOfWeek: 5, isToday: false, type: 'projected' as const, workout: { dayNumber: 4, dayName: 'Pull', cycle: 1 } },
+          { date: '2026-02-14', dayOfWeek: 5, isToday: false, type: 'projected' as const, workout: { dayNumber: 4, dayName: 'Chest/Back', cycle: 1 } },
           { date: '2026-02-15', dayOfWeek: 6, isToday: false, type: 'rest' as const },
         ],
       },
@@ -161,7 +161,7 @@ describe('Plan', () => {
 
   it('hides empty state when logs exist', () => {
     const mock = createMockProgress({
-      workoutLogs: [{ id: '1', date: '2026-02-01', cycle: 1, dayNumber: 1, dayName: 'Chest/Back', exercises: [], completed: true }],
+      workoutLogs: [{ id: '1', date: '2026-02-01', cycle: 1, dayNumber: 1, dayName: 'Pull', exercises: [], completed: true }],
     });
     renderPlan(mock);
     expect(screen.queryByText('Start training to refine projections.')).not.toBeInTheDocument();
@@ -227,25 +227,30 @@ describe('Plan', () => {
   });
 
   it('shows "Undo rest" button when rest is marked for today', () => {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const mock = createMockProgress({ restDays: [todayStr] });
-    // When rest is marked, today cell becomes explicit-rest (no workout)
+    // Build cells with unique dates that won't collide with todayStr
+    const baseDate = new Date(now);
+    const cellDates = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(baseDate);
+      d.setDate(d.getDate() - d.getDay() + i); // Sun-Sat of current week
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    });
+    const todayDow = now.getDay();
     const projection = makeProjection({
       weeks: [
         {
           weekLabel: 'This Week',
-          weekStartDate: '2026-02-09',
+          weekStartDate: cellDates[0],
           isCurrentWeek: true,
           isDeloadWeek: false,
-          cells: [
-            { date: '2026-02-09', dayOfWeek: 0, isToday: false, type: 'past-missed' as const },
-            { date: todayStr, dayOfWeek: 1, isToday: true, type: 'explicit-rest' as const },
-            { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 } },
-            { date: '2026-02-12', dayOfWeek: 3, isToday: false, type: 'projected' as const, workout: { dayNumber: 2, dayName: 'Shoulders/Arms', cycle: 1 } },
-            { date: '2026-02-13', dayOfWeek: 4, isToday: false, type: 'rest' as const },
-            { date: '2026-02-14', dayOfWeek: 5, isToday: false, type: 'projected' as const, workout: { dayNumber: 3, dayName: 'Legs (A)', cycle: 1 } },
-            { date: '2026-02-15', dayOfWeek: 6, isToday: false, type: 'rest' as const },
-          ],
+          cells: cellDates.map((date, i) => {
+            if (i === todayDow) {
+              return { date, dayOfWeek: i, isToday: true, type: 'explicit-rest' as const };
+            }
+            return { date, dayOfWeek: i, isToday: false, type: 'rest' as const };
+          }),
         },
       ],
     });
@@ -268,24 +273,29 @@ describe('Plan', () => {
   });
 
   it('clicking "Undo rest" calls removeRestDay', async () => {
-    const todayStr = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const mock = createMockProgress({ restDays: [todayStr] });
+    const baseDate = new Date(now);
+    const cellDates = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(baseDate);
+      d.setDate(d.getDate() - d.getDay() + i);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    });
+    const todayDow = now.getDay();
     const projection = makeProjection({
       weeks: [
         {
           weekLabel: 'This Week',
-          weekStartDate: '2026-02-09',
+          weekStartDate: cellDates[0],
           isCurrentWeek: true,
           isDeloadWeek: false,
-          cells: [
-            { date: '2026-02-09', dayOfWeek: 0, isToday: false, type: 'past-missed' as const },
-            { date: todayStr, dayOfWeek: 1, isToday: true, type: 'explicit-rest' as const },
-            { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 } },
-            { date: '2026-02-12', dayOfWeek: 3, isToday: false, type: 'rest' as const },
-            { date: '2026-02-13', dayOfWeek: 4, isToday: false, type: 'rest' as const },
-            { date: '2026-02-14', dayOfWeek: 5, isToday: false, type: 'rest' as const },
-            { date: '2026-02-15', dayOfWeek: 6, isToday: false, type: 'rest' as const },
-          ],
+          cells: cellDates.map((date, i) => {
+            if (i === todayDow) {
+              return { date, dayOfWeek: i, isToday: true, type: 'explicit-rest' as const };
+            }
+            return { date, dayOfWeek: i, isToday: false, type: 'rest' as const };
+          }),
         },
       ],
     });

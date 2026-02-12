@@ -141,6 +141,6 @@ describe('Dashboard', () => {
     // First button is Day 1 card (deload button not rendered by default)
     await userEvent.click(buttons[0]);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/Day 1 — Chest\/Back/)).toBeInTheDocument();
+    expect(screen.getByText(/Day 1 — Pull/)).toBeInTheDocument();
   });
 });

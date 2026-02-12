@@ -13,6 +13,7 @@ import {
 } from '../services/workoutStateManager';
 import { validateWorkoutCompletion } from '../services/workoutValidator';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
+import { toISODateString } from '../utils/dateFormatter';
 import { useSessionTimer } from '../hooks/useSessionTimer';
 import { useRestTimer } from '../hooks/useRestTimer';
 
@@ -265,7 +266,7 @@ export function Workout() {
     const totalVolume = calculateTotalVolume(exerciseLogs);
     const workoutLog: WorkoutLog = {
       id: `${Date.now()}-${dayNum}`,
-      date: new Date().toISOString().split('T')[0],
+      date: toISODateString(new Date()),
       cycle: currentCycle,
       dayNumber: dayNum,
       dayName: workoutDay?.name || '',

@@ -34,7 +34,7 @@ describe('CalendarDayCell', () => {
   it('renders day abbreviation for projected cell', () => {
     const cell = makeCell({
       type: 'projected',
-      workout: { dayNumber: 4, dayName: 'Pull', cycle: 1 },
+      workout: { dayNumber: 1, dayName: 'Pull', cycle: 1 },
     });
     render(<CalendarDayCell cell={cell} onTap={vi.fn()} />);
     expect(screen.getByText('Pull')).toBeInTheDocument();

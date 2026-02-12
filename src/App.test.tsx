@@ -63,7 +63,7 @@ describe('App', () => {
   it('hides BottomNav on workout routes', async () => {
     renderApp('/workout/1');
     await waitFor(() => {
-      expect(screen.getByText('Chest/Back')).toBeInTheDocument();
+      expect(screen.getByText('Pull')).toBeInTheDocument();
     });
     expect(screen.queryByLabelText('Main navigation')).not.toBeInTheDocument();
   });

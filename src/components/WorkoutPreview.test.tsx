@@ -51,9 +51,9 @@ describe('WorkoutPreview', () => {
 
   it('renders day name and exercises for Day 1', () => {
     renderPreview(1);
-    expect(screen.getByText(/Chest\/Back/)).toBeInTheDocument();
-    expect(screen.getByText('Incline Barbell Press')).toBeInTheDocument();
-    expect(screen.getByText('T Bar Upper Back Row into Kelso Shrug')).toBeInTheDocument();
+    expect(screen.getByText(/Day 1 — Pull/)).toBeInTheDocument();
+    expect(screen.getByText('ISO High Row')).toBeInTheDocument();
+    expect(screen.getByText('Bayesian Curls')).toBeInTheDocument();
   });
 
   it('renders all exercises for the day', () => {
@@ -65,10 +65,10 @@ describe('WorkoutPreview', () => {
 
   it('shows category badges', () => {
     renderPreview(1);
-    const chestBadges = screen.getAllByText('chest');
-    expect(chestBadges.length).toBeGreaterThan(0);
     const backBadges = screen.getAllByText('back');
     expect(backBadges.length).toBeGreaterThan(0);
+    const bicepsBadges = screen.getAllByText('biceps');
+    expect(bicepsBadges.length).toBeGreaterThan(0);
   });
 
   it('shows sets and reps', () => {
@@ -78,12 +78,12 @@ describe('WorkoutPreview', () => {
   });
 
   it('shows /side indicator for perSide exercises', () => {
-    renderPreview(1); // Day 1 has Single Arm Cable Row with perSide
+    renderPreview(4); // Day 4 (Chest/Back) has Single Arm Cable Row with perSide
     expect(screen.getByText(/\/side/)).toBeInTheDocument();
   });
 
   it('shows exercise notes when present', () => {
-    renderPreview(2); // Day 2 has 21s Ez Bar Bicep Curl with notes
+    renderPreview(5); // Day 5 (Shoulders/Arms) has 21s Ez Bar Bicep Curl with notes
     expect(screen.getByText('7 bottom half + 7 top half + 7 full ROM')).toBeInTheDocument();
   });
 
@@ -102,7 +102,7 @@ describe('WorkoutPreview', () => {
     renderPreview(1);
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
-    expect(dialog).toHaveAttribute('aria-label', 'Chest/Back preview');
+    expect(dialog).toHaveAttribute('aria-label', 'Pull preview');
   });
 
   it('calls onClose when backdrop is clicked', async () => {
@@ -139,11 +139,11 @@ describe('WorkoutPreview', () => {
         date: '2026-02-06',
         cycle: 1,
         dayNumber: 1,
-        dayName: 'Chest/Back',
+        dayName: 'Pull',
         completed: true,
         exercises: [
           {
-            exerciseName: 'Incline Barbell Press',
+            exerciseName: 'ISO High Row',
             sets: [
               { setNumber: 1, weight: 135, reps: 10, completed: true },
               { setNumber: 2, weight: 135, reps: 8, completed: true },
@@ -158,6 +158,6 @@ describe('WorkoutPreview', () => {
         <WorkoutPreview dayNumber={1} onClose={vi.fn()} />
       </MemoryRouter>
     );
-    expect(screen.getByText('Last: 135 lb × 8')).toBeInTheDocument();
+    expect(screen.getByText('Last: 135 lb \u00d7 8')).toBeInTheDocument();
   });
 });

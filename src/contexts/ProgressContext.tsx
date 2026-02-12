@@ -2,12 +2,13 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import { UserProgress, WorkoutLog, ExerciseLog } from '../types';
 import { calculateTotalVolume } from '../utils/volumeCalculator';
 import { clearAllActiveWorkouts } from '../services/workoutStateManager';
+import { toISODateString } from '../utils/dateFormatter';
 
 const STORAGE_KEY = 'sanctum-progress';
 
 const DEFAULT_PROGRESS: UserProgress = {
   currentCycle: 1,
-  cycleStartDate: new Date().toISOString().split('T')[0],
+  cycleStartDate: toISODateString(new Date()),
   deloadIntervalWeeks: 5,
   isDeloadWeek: false,
   workoutLogs: [],
@@ -111,7 +112,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const recordDeload = useCallback(() => {
     setProgress(prev => ({
       ...prev,
-      lastDeloadDate: new Date().toISOString().split('T')[0],
+      lastDeloadDate: toISODateString(new Date()),
     }));
   }, []);
 
@@ -126,7 +127,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress(prev => ({
       ...prev,
       isDeloadWeek: false,
-      lastDeloadDate: new Date().toISOString().split('T')[0],
+      lastDeloadDate: toISODateString(new Date()),
     }));
   }, []);
 
@@ -162,7 +163,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `sanctum-backup-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `sanctum-backup-${toISODateString(new Date())}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

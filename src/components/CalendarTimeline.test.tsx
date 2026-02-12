@@ -7,7 +7,7 @@ import { CalendarProjection, CalendarCell } from '../services/calendarProjection
 function makeProjection(overrides: Partial<CalendarProjection> = {}): CalendarProjection {
   return {
     frequency: { workoutsPerWeek: 5, avgDaysBetweenWorkouts: 1.4, confidence: 'default' },
-    nextWorkout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 },
+    nextWorkout: { dayNumber: 1, dayName: 'Pull', cycle: 1 },
     weeks: [
       {
         weekLabel: 'This Week',
@@ -16,8 +16,8 @@ function makeProjection(overrides: Partial<CalendarProjection> = {}): CalendarPr
         isDeloadWeek: false,
         cells: [
           { date: '2026-02-09', dayOfWeek: 0, isToday: false, type: 'rest' as const },
-          { date: '2026-02-10', dayOfWeek: 1, isToday: true, type: 'today' as const, workout: { dayNumber: 1, dayName: 'Chest/Back', cycle: 1 } },
-          { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 2, dayName: 'Shoulders/Arms', cycle: 1 } },
+          { date: '2026-02-10', dayOfWeek: 1, isToday: true, type: 'today' as const, workout: { dayNumber: 1, dayName: 'Pull', cycle: 1 } },
+          { date: '2026-02-11', dayOfWeek: 2, isToday: false, type: 'projected' as const, workout: { dayNumber: 2, dayName: 'Push', cycle: 1 } },
           { date: '2026-02-12', dayOfWeek: 3, isToday: false, type: 'rest' as const },
           { date: '2026-02-13', dayOfWeek: 4, isToday: false, type: 'rest' as const },
           { date: '2026-02-14', dayOfWeek: 5, isToday: false, type: 'rest' as const },
